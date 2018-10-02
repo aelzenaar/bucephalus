@@ -30,4 +30,4 @@ def fill(template, data):
     return pystache.render(templateContent, data)
 
 
-print(fill("template.mustache", decode("test.tex")))
+#print(fill("template.mustache", decode("test.tex")))

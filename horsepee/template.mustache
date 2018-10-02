@@ -14,9 +14,10 @@
 \DeclareSIUnit\foot{ft}
 \DeclareSIUnit\litre{\liter}
 
+\usepackage{lastpage}
+
 \usepackage{pgfplots}
 \usepackage{graphicx}
-\usepackage{float}
 \usepackage{gensymb}
 \usepackage{commath}
 \usepackage{hyperref}
@@ -34,7 +35,7 @@
 \newtheorem*{iden}{Identity}
 \newtheorem*{lemma}{Lemma}
 \newtheorem*{obs}{Observation}
-\theoremstyle*{definition}
+% \theoremstyle*{definition}
 \newtheorem*{defn}{Definition}
 \newtheorem*{ex}{Example}
 \newtheorem*{con}{Construction}
@@ -50,10 +51,11 @@
 \chead{ {{Buc_id}} }
 \rhead{ {{Buc_author}} }
 
-\cfoot{Page \thepage of \pages}
+\cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
 
 \begin{document}
+\section*{ {{Buc_title}} }
 
-{{content}}
+{{{content}}}
 
 \end{document}
