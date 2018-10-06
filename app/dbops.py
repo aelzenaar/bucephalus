@@ -8,7 +8,7 @@ from pathlib import Path
 
 from tinydb import TinyDB, Query, where
 
-directory="./data/"
+directory=Path.home()/"bucephalus"
 dbname="database.db"
 
 def addrecord(title, author, tags, meat, source=None):
@@ -86,3 +86,14 @@ def get_records_by_date(year=None, month=None, day=None, name=None):
     return docs
 
   return db.get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & (where('Buc_name') == name))
+
+def get_single_record_path(ident, meat):
+  db = TinyDB(directory/dbname)
+  item = db.table('files').get(doc_id=int(ident))
+  if item == None:
+    return None
+  if not(item['Buc_name'] == meat):
+    return None
+
+  filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/str(item['Buc_name'])
+  return filename

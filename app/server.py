@@ -4,15 +4,11 @@ app = Flask(__name__)
 import sys
 
 from pathlib import Path
-from tinydb import TinyDB, Query, where
 
 import calendar
 import magic
 
 import dbops
-
-datadir = Path("./data")
-dbname = "database.db"
 
 @app.route('/')
 def index():
@@ -28,8 +24,6 @@ def noview():
 @app.route('/v/time/<year>/<month>/<day>/')
 @app.route('/v/time/<year>/<month>/<day>/<meat>/')
 def v_time(year=None,month=None,day=None,meat=None):
-  db = TinyDB(datadir/dbname)
-
   items = []
   if(year == None):
     years = dbops.get_records_by_date()
@@ -78,7 +72,7 @@ def v_time(year=None,month=None,day=None,meat=None):
   source = item['Buc_source'] if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
-                         article_raw=rawname, article_src=source,
+                         article_raw=rawname, article_src=source, tags=tags,
                          breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                       {'loc': url_for('v_time', year=str(year)), 'name': year},
                                       {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)]},
@@ -92,14 +86,9 @@ def r_file(ident=None,meat=None):
   if (ident == None) | (meat == None):
     return redirect(url_for('index'))
 
-  db = TinyDB(datadir/dbname)
-  item = db.table('files').get(doc_id=int(ident))
-  if item == None:
+  filename = dbops.get_single_record_path(ident,meat)
+  if(filename == None):
     return abort(404)
-  if not(item['Buc_name'] == meat):
-    return abort(404)
-
-  filename = datadir/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/str(item['Buc_name'])
   with open(filename, 'rb') as f:
     data = f.read()
 

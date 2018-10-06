@@ -2,15 +2,14 @@
 {% set page_title = "Viewing article " ~ article_name %}
 {% set nologo = 1 %}
 {% block content %}
-  <h2>File viewer</h2>
-  <table>
-    <tr><th style='text-align:right;'>Filename:</th><td>{{article_name}}</td>
-        <th style='text-align:right;'>Title:</th><td>{{article_title}}</td></tr>
-    <tr><th style='text-align:right;'>Modified:</th><td>{{article_timestamp}}</td>
-        <th style='text-align:right;'>Tags:</th><td>{% for tag in tags -%}<a href="{{tag.loc}}">{{tag.name}}</a> {%- endfor %}</td></tr>
-    <tr><th style='text-align:right;'>Raw file:</th><td><a href="{{article_raw}}">Download</a></td>
-    {%if article_src is defined%}<th style='text-align:right;'>Source:</th><td><a href="{{article_src}}">Download</a></td>{% endif %}</tr>
-  </table>
-  <div><iframe src="{{article_raw}}" style="width:70vw; height: 80vh"></iframe></div>
-</main>
+<h2>File viewer</h2>
+<table>
+  <tr><th style='text-align:right;'>Filename:</th><td>{{article_name}}</td>
+      <th style='text-align:right;'>Title:</th><td>{{article_title}}</td></tr>
+  <tr><th style='text-align:right;'>Modified:</th><td>{{article_timestamp}}</td>
+      <th style='text-align:right;'>Tags:</th><td>{% for tag in tags -%}<a href="{{tag.loc}}">{{tag.name}}</a>&nbsp; {%- endfor %}</td></tr>
+  <tr><th style='text-align:right;'>Raw file:</th><td><a href="{{article_raw}}">Download</a></td>
+  {%if article_src is defined%}<th style='text-align:right;'>Source:</th><td><a href="{{article_src}}">Download</a></td>{% endif %}</tr>
+</table>
+<div><iframe src="{{article_raw}}" style="width:70vw; height: 80vh"></iframe></div>
 {% endblock %}
