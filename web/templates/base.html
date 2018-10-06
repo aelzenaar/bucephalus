@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>{% if page_title is defined%}{{page_title}} | {%endif%}Bucephalus</title>
+    <meta name="description" content="Bucephalus is a document repository.">
+    {% endblock %}
+  </head>
+  <body>
+    <header style="margin: 0.5em auto; width: 70%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
+      {% block header %}
+      {% if nologo is not defined%}<a href="/static/logo.jpg"><img src="/static/bucephalus.jpg" alt="A horse."/></a>{% endif%}
+      <h1 style="margin: 0; padding: 0; margin-bottom: 0.2em">{% if page_title is defined%}{{page_title}}{%else%}Bucephalus{%endif%}</h1>
+      {% if breadcrumbs is defined%} Currently in:
+        {% for breadcrumb in breadcrumbs %}
+          {% if breadcrumb.current is defined %}
+            <b style="border=1px solid; background-color:white; padding:0.2em">{{breadcrumb.name}}</b>
+          {% else %}
+            <a style="border=1px solid; background-color:white; padding:0.2em" href="{{breadcrumb.loc}}">{{breadcrumb.name}}</a> &#8617;
+          {% endif %}
+        {% endfor %}
+      {%endif%}
+      {% if prev is defined %}
+            &#8668; <a style="border=1px solid; background-color:#b3ffcc; padding:0.2em" href="{{prev.loc}}">{{prev.name}}</a>
+      {% endif %}
+      {% if next is defined %}
+            <a style="border=1px solid; background-color:#b3ffcc; padding:0.2em" href="{{next.loc}}">{{next.name}}</a> &#8669;
+      {% endif %}
+      {%endblock%}
+    </header>
+    <main style="margin: auto; width: 60%">
+    {%block content%}{% endblock %}
+    </main>
+  </body>
+  <footer style="margin: 0.5em auto; width: 70%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
+  {%block footer%}
+    <span><a href="/">Return home.</a></span>
+  {%endblock %}
+  </footer>
+</html>

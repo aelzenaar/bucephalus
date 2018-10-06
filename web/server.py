@@ -11,8 +11,7 @@ dbname = "database.db"
 
 @app.route('/')
 def index():
-    with open('index.html') as f:
-      return f.read()
+  return render_template("index.html")
 
 @app.route('/v/')
 def noview():
@@ -64,4 +63,18 @@ def v_time(year=None,month=None,day=None,meat=None):
                                         {'loc':'/v/time/'+str(item['ts_year'])+'/'+str(item['ts_month']) + '/' + str(item['ts_day']),
                                          'name':item['ts_day'], 'current':1}])
 
-  return abort(404)
+  item = db.table('files').get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & (where('Buc_name') == meat))
+  print(meat)
+  if(item == None):
+    return abort(404)
+
+  rawname = "/r/" + str(item.doc_id) + "/" + meat
+
+  tags = []
+  for tag in item['Buc_tags']:
+    tags.append({'name': tag, 'loc': "/v/tag/" + tag})
+  timestamp = str(item['ts_year'])+str('/')+str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' + str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
+  source = item['Buc_source'] if 'Buc_source' in item else None
+
+  return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
+                                         article_raw=rawname, article_src=source)
