@@ -11,3 +11,17 @@ Goal: [futuristic](https://abstrusegoose.com/440) paperless society or something
 4. Tag system
 5. Extension from TeX to Geogebra files?
 6. Scan-to-email-to-upload automatically?
+
+## Dependencies
+* [tinydb](https://pypi.org/project/tinydb/)
+* [pystache](https://github.com/defunkt/pystache)
+
+## Notes
+ID format: '[date in YYYYMMDDhhmmss, converted to hexadecimal]:[md5hash of file]' --- but if you want the date, pull it
+from the metadata in the database (or from the file structure).
+
+Directories:-
+* `data/`
+  * `YYYY/MM/DD/hash.ext`
+  * `YYYY/MM/DD/hash-src/blah`
+  * `database.db`
