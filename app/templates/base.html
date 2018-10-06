@@ -12,7 +12,7 @@
       {% endblock %}
   </head>
   <body>
-    <header style="margin: 0.5em auto; width: 70%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
+    <header style="margin: 0.5em auto; width: 80%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
       {% block header %}
       {% if nologo is not defined%}<a href="/static/logo.jpg"><img src="/static/bucephalus.jpg" alt="A horse."/></a>{% endif%}
       <h1 style="margin: 0; padding: 0; margin-bottom: 0.2em">{% if page_title is defined%}{{page_title}}{%else%}Bucephalus{%endif%}</h1>
@@ -33,11 +33,11 @@
       {% endif %}
       {%endblock%}
     </header>
-    <main style="margin: auto; width: 60%">
+    <main style="margin: auto; width: 70%">
     {%block content%}{% endblock %}
     </main>
   </body>
-  <footer style="margin: 0.5em auto; width: 70%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
+  <footer style="margin: 0.5em auto; width: 80%; background-color:#b3c6ff; padding: 0.5em; text-align:center">
   {%block footer%}
     <span><a href="/">Return home.</a></span>
   {%endblock %}

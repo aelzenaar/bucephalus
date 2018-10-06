@@ -58,7 +58,7 @@ def v_time(year=None,month=None,day=None,meat=None):
     docs = dbops.get_records_by_date(year, month, day)
     for doc in docs:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month), day=str(day), meat=doc['Buc_name']),
-                    'name': doc['Buc_name'] + " (at " + str(doc["ts_hour"]) + ":" + str(doc['ts_minute']) + ":" + str(doc['ts_second']) + ") [tags: " + str(doc['Buc_tags'].split(',')) + "]"})
+                    'name': doc['Buc_name'] + " (at " + str(doc["ts_hour"]) + ":" + str(doc['ts_minute']) + ":" + str(doc['ts_second']) + ") [tags: " + str(doc['Buc_tags']) + "]"})
     return render_template('viewer.html',items=items,view_name='article',
                            breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                         {'loc': url_for('v_time', year=str(year)), 'name': year},
@@ -100,7 +100,7 @@ def r_file(ident=None,meat=None):
     return abort(404)
 
   filename = datadir/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/str(item['Buc_name'])
-  with open(filename) as f:
+  with open(filename, 'rb') as f:
     data = f.read()
 
   resp = make_response(data)

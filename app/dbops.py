@@ -12,6 +12,9 @@ directory="./data/"
 dbname="database.db"
 
 def addrecord(title, author, tags, meat, source=None):
+  meatpath = Path(meat)
+  if not(meatpath.exists()):
+    return None
   # Sort out metadata
   date = datetime.datetime.today()
   metadata = {'ts_year':date.year,
@@ -23,9 +26,10 @@ def addrecord(title, author, tags, meat, source=None):
               'Buc_tags': tags,
               'Buc_author': author,
               'Buc_title': title,
-              'Buc_name':meat.name}
+              'Buc_name': meatpath.name}
   if not(source == None):
-    metadata['Buc_source'] = source.name
+    srcpath = Path(source)
+    metadata['Buc_source'] = sourcepath.name
 
   # Make correct directory if it doesn't exist
   dd = Path(directory)
@@ -41,16 +45,15 @@ def addrecord(title, author, tags, meat, source=None):
     sys.exit("*** Datestamp directory (" + directory + ") is not a directory.")
 
   # Copy file to location, and sources if needed
-  meatpath = Path(meat)
   copyfile(meatpath, datedir / meatpath.name)
   if not(source == None):
-    srcpath = Path(source)
     copyfile(srcpath, datedir / 'src' / srcpath.name)
 
   # Sort out database
   db = TinyDB(Path(directory)/dbname)
   metatable = db.table('files')
   metatable.insert(metadata)
+  return metatable
 
 def get_records_by_date(year=None, month=None, day=None, name=None):
   db = TinyDB(Path(directory)/dbname).table('files')
