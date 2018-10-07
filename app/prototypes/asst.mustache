@@ -14,6 +14,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage[parfill]{parskip}
 \usepackage{mathtools}
+\usepackage{fontspec}
 
 \usepackage{tikz}
 
@@ -22,19 +23,19 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
-\lhead{{{Buc_author}}\\{{template.studentid}}}
-\chead{{{template.course}}, {{template.semester}}}
+\lhead{ {{Buc_author}}\\(ID {{template.studentid}}) }
+\chead{ {{template.course}}, {{template.semester}} }
 \rhead{Homework 3}
-\cfoot{Page \thepage of }
+\cfoot{Page \thepage}
 
-\author{{{Buc_author}}\\ {{template.studentid}} \quad {{template.upi}}\\{{template.course}}}
-\date{Due on Thursday 4 October 2018}
-\title{Homework {{template.asstno}}}
+\author{ {{Buc_author}}\\ {{template.studentid}} \quad {{template.upi}}\\{{template.course}} }
+\date{Due on {{template.duedate}} }
+\title{Homework {{template.asstno}} }
 
 \begin{document}
 
 \maketitle
 
-{{content}}
+{{{content}}}
 
 \end{document}

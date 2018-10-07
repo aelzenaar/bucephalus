@@ -64,5 +64,9 @@ def vacuum(filename):
   metadata.pop('template', None)
   dbops.addrecord(title, author, tags, pdfname, filename, metadata, False)
 
+if len(sys.argv) < 2:
+  print("Bucephalus Vacuum TeX Script")
+  print("Usage: " + sys.argv[0] + " <filename.tex>")
+  sys.exit()
 
-print(vacuum("test.tex"))
+vacuum(sys.argv[1])

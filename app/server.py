@@ -7,12 +7,13 @@ from pathlib import Path
 
 import calendar
 import magic
+from datetime import datetime
 
 import dbops
 
 @app.route('/')
 def index():
-  return render_template("index.html")
+  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"))
 
 @app.route('/v/')
 def noview():
