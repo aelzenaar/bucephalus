@@ -30,12 +30,19 @@
 \lstset{basicstyle=\ttfamily\linespread{0.8}\small}
 
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\union}[1]{\cup{#1}}
+\newcommand{\inter}[1]{\cap{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
 
 \newtheorem*{thm}{Theorem}
 \newtheorem*{iden}{Identity}
 \newtheorem*{lemma}{Lemma}
 \newtheorem*{obs}{Observation}
-% \theoremstyle*{definition}
+\newtheorem*{claim}{Claim}
+\theoremstyle{definition}
 \newtheorem*{defn}{Definition}
 \newtheorem*{ex}{Example}
 \newtheorem*{con}{Construction}
@@ -55,7 +62,5 @@
 
 \begin{document}
 \section*{ {{Buc_title}} }
-
 {{{content}}}
-
 \end{document}
