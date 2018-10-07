@@ -11,6 +11,25 @@ from datetime import datetime
 
 import dbops
 
+def timestamp_for_item(item):
+  return str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
+         str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
+
+
+def menu_name_for_item(item):
+  return item['Buc_name'] + " (modified: "+ timestamp_for_item(item) + "); tags: " + human_readable_tags(item['Buc_tags'])
+
+def human_readable_tags(tags):
+  tags = ['\"{0}\"'.format(tag) for tag in tags]
+  nice_tag_list = ""
+  if len(tags) == 1:
+    nice_tag_list = tags[0]
+  else:
+    for tag in tags[:-1]:
+      nice_tag_list = nice_tag_list + tag + ", "
+    nice_tag_list = nice_tag_list + " and " + tags[-1]
+  return nice_tag_list
+
 # Render a specific article from its database entry, given the set of breadcrumbs you want to display.
 def render_article(item, breadcrumbs):
   rawname = "/r/" + str(item.doc_id) + "/" + item['Buc_name']
@@ -18,7 +37,7 @@ def render_article(item, breadcrumbs):
   tags = []
   for tag in item['Buc_tags']:
     tags.append({'name': tag, 'loc': "/v/tag/" + tag})
-  timestamp = str(item['ts_year'])+str('/')+str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' + str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
+  timestamp = timestamp_for_item(item)
   source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
@@ -98,7 +117,7 @@ def v_time(year=None,month=None,day=None,meat=None):
     docs = dbops.get_records_by_date(year, month, day)
     for doc in docs:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month), day=str(day), meat=doc['Buc_name']),
-                    'name': doc['Buc_name'] + " (at " + str(doc["ts_hour"]) + ":" + str(doc['ts_minute']) + ":" + str(doc['ts_second']) + ") [tags: " + str(doc['Buc_tags']) + "]"})
+                    'name': menu_name_for_item(doc)})
     return render_template('viewer.html',items=items,view_name='article',
                            breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                         {'loc': url_for('v_time', year=str(year)), 'name': year},
@@ -147,19 +166,13 @@ def v_tag(tags=None, ident=None, meat=None):
     return render_template('viewer.html',items=items, view_name='tag', breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag', 'current':1}])
 
   tags = tags.split('/')
-  nice_tag_list = ""
-  if len(tags) == 1:
-    nice_tag_list = tags[0]
-  else:
-    for tag in tags[:-1]:
-      nice_tag_list = nice_tag_list + tag + ", "
-    nice_tag_list = nice_tag_list + " and " + tags[-1]
+  nice_tag_list = nice_tag_list = human_readable_tags(tags)
 
   if (ident == None):
     docs = dbops.get_records_by_tag(tags)
     for doc in docs:
       items.append({'loc': url_for('v_tag', tags="/".join(tags), ident=doc.doc_id, meat=doc['Buc_name']),
-                    'name': doc['Buc_name'] + " (at " + str(doc["ts_hour"]) + ":" + str(doc['ts_minute']) + ":" + str(doc['ts_second']) + ") [tags: " + str(doc['Buc_tags']) + "]"})
+                    'name': menu_name_for_item(doc)})
     return render_template('viewer.html', items=items, view_name='tag',
                            breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag'},
                                         {'loc':url_for('v_tag', tags="/".join(tags)), 'name': nice_tag_list, 'current':1}],

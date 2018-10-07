@@ -1,0 +1,10 @@
+.viewmenu li { font-family: sans-serif; margin-bottom: 0.4em; }
+.viewmenu a { text-decoration: none; font-style: sans-serif; }
+.viewmenu a:hover { text-decoration: underline; }
+
+header, footer { margin: 0.5em auto; width: 80%; background-color:#b3c6ff; padding: 0.5em; text-align:center }
+main { margin: auto; width: 70% }
+
+header h1 { margin: 0; padding: 0; margin-bottom: 0.2em }
+header .breadcrumb { border=1px solid; background-color:white; padding:0.2em }
+header .prevnext { border=1px solid; background-color:#b3ffcc; padding:0.2em }

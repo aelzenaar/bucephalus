@@ -3,10 +3,9 @@
 {% block content %}
   <h2>The following finer details are available:</h2>
   {{ viewernotes|safe }}
-  <ul>
+  <ul class="viewmenu">
     {% for item in items -%}
       <li><a href="{{item.loc}}">{{item.name}}</a></li>
     {%- endfor%}
   </ul>
-</main>
 {% endblock %}
