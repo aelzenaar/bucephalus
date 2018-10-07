@@ -57,4 +57,4 @@ by design, so that you don't end up with several slightly different copies of th
 * [tinydb](https://pypi.org/project/tinydb/)
 * [pystache](https://github.com/defunkt/pystache)
 * [flask](http://flask.pocoo.org/)
-
+* [python-magic](https://github.com/ahupp/python-magic)
