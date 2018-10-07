@@ -1,0 +1,9 @@
+{%extends "base.html" %}
+{% set page_title = "View by ID" %}
+{% block content %}
+  <h2>Enter a specific ID.</h2>
+  <form method="post" action="{{url_for('v_raw_post')}}">
+    ID: <input type="text" name="ident"/>
+    <input type="submit" value="Get item">
+  </form>
+{% endblock %}

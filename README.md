@@ -5,9 +5,9 @@ This repository is only a test. [There is nothing to see here](https://www.youtu
 Goal: [futuristic](https://abstrusegoose.com/440) paperless society or something.
 
 ## Plan.
-1. Prototype template system for TeX [Prototyped](horsepee/)
-2. Storage of files by date for retrieval by ID in both source and PDF form where applicable. [Done for date-based retrieval](app/) - need to add ID based retrieval
-3. REST api and web interface barebones [Done for date-based retrieval](app/)
+1. Prototype template system for TeX (Done)
+2. Storage of files by date for retrieval by ID in both source and PDF form where applicable. (Done.)
+3. REST api and web interface barebones (Done)
 4. Nice system to add files
 4. Tag system
 5. Search

@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, abort, render_template, make_response
+from flask import Flask, redirect, url_for, abort, render_template, make_response, request
 app = Flask(__name__)
 
 import sys
@@ -64,7 +64,14 @@ def v_time(year=None,month=None,day=None,meat=None):
   if(item == None):
     return abort(404)
 
-  rawname = "/r/" + str(item.doc_id) + "/" + meat
+  return render_article(item, [{'loc': url_for('v_time'), 'name': 'By date'},
+                               {'loc': url_for('v_time', year=str(year)), 'name': year},
+                               {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)]},
+                               {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day)), 'name': str(day)},
+                               {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day), meat=meat), 'name':meat, 'current':1}])
+
+def render_article(item, breadcrumbs):
+  rawname = "/r/" + str(item.doc_id) + "/" + item['Buc_name']
 
   tags = []
   for tag in item['Buc_tags']:
@@ -74,11 +81,7 @@ def v_time(year=None,month=None,day=None,meat=None):
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
                          article_raw=rawname, article_src=source, tags=tags,
-                         breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
-                                      {'loc': url_for('v_time', year=str(year)), 'name': year},
-                                      {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)]},
-                                      {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day)), 'name': str(day)},
-                                      {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day), meat=meat), 'name':meat, 'current':1}])
+                         breadcrumbs=breadcrumbs)
 
 @app.route('/r/')
 @app.route('/r/<ident>/')
@@ -105,3 +108,21 @@ def r_file(ident=None,meat=None,src=None):
   else:
     resp.headers['Content-Type'] = mime
   return resp
+
+@app.route('/v/raw/post', methods=['POST'])
+def v_raw_post():
+  print(url_for('v_raw', ident = request.form['ident']))
+  return redirect(url_for('v_raw', ident = request.form['ident']))
+
+@app.route('/v/raw/')
+@app.route('/v/raw/<ident>/')
+def v_raw(ident=None):
+  if not (ident == None):
+    item = dbops.get_record_by_id(ident)
+    if(item == None):
+      return abort(404)
+    else:
+      return render_article(item, [{'loc': url_for('v_raw'), 'name': 'By ID'},
+                                   {'loc': url_for('v_raw', ident=str(ident)), 'name':ident, 'current':1}])
+
+  return render_template("v_raw.html")

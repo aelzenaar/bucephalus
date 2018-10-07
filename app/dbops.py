@@ -103,6 +103,13 @@ def get_records_by_date(year=None, month=None, day=None, name=None):
 
   return db.get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & (where('Buc_name') == name))
 
+def get_record_by_id(ident):
+  db = TinyDB(directory/dbname)
+  item = db.table('files').get(doc_id=int(ident))
+  if item == None:
+    return None
+  return item
+
 def get_single_record_path(ident, meat):
   db = TinyDB(directory/dbname)
   item = db.table('files').get(doc_id=int(ident))
