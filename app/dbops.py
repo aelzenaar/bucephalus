@@ -71,6 +71,19 @@ def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False
 
   return metatable
 
+def get_records_by_tag(tags=None):
+  db = TinyDB(Path(directory)/dbname).table('files')
+  if tags == None:
+    tags = []
+    for item in db:
+      for tag in item['Buc_tags']:
+        if tag not in tags:
+          tags.append(tag)
+    return sorted(tags)
+
+  q = Query()
+  return db.search(q.Buc_tags.all(tags))
+
 def get_records_by_date(year=None, month=None, day=None, name=None):
   db = TinyDB(Path(directory)/dbname).table('files')
 
