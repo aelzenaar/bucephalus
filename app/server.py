@@ -22,7 +22,7 @@ def render_article(item, breadcrumbs):
   source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
-                         article_raw=rawname, article_src=source, tags=tags,
+                         article_raw=rawname, article_src=source, article_author=item['Buc_author'], article_id=item.doc_id, tags=tags,
                          breadcrumbs=breadcrumbs)
 
 # Endpoint to pull a specific raw file (i.e. no UI) out of the database.
@@ -46,6 +46,7 @@ def r_file(ident=None,meat=None,src=None):
   resp = make_response(data)
   # Fudge the mimetypes
   mime = magic.Magic(mime=True).from_file(str(filename))
+  print(mime)
   if ("text/" in mime) & (not("html" in mime)):
     resp.headers['Content-Type'] = 'text/plain'
   else:
@@ -159,8 +160,10 @@ def v_tag(tags=None, ident=None, meat=None):
     for doc in docs:
       items.append({'loc': url_for('v_tag', tags="/".join(tags), ident=doc.doc_id, meat=doc['Buc_name']),
                     'name': doc['Buc_name'] + " (at " + str(doc["ts_hour"]) + ":" + str(doc['ts_minute']) + ":" + str(doc['ts_second']) + ") [tags: " + str(doc['Buc_tags']) + "]"})
-    return render_template('viewer.html', items=items, view_name='tag', breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag'},
-                                                                                     {'loc':url_for('v_tag', tags="/".join(tags)), 'name': nice_tag_list, 'current':1}])
+    return render_template('viewer.html', items=items, view_name='tag',
+                           breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag'},
+                                        {'loc':url_for('v_tag', tags="/".join(tags)), 'name': nice_tag_list, 'current':1}],
+                           viewernotes="<p>Did you know: you can view multiple tags at once by appending them to the URL. For example: <code>/v/tag/tag1/tag2</code>.</p>")
 
   item = dbops.get_record_by_id(ident)
   if(item == None):

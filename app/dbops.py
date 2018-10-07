@@ -144,3 +144,26 @@ def get_single_record_src_path(ident,src):
 
   filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/"src"/str(item['Buc_source'])
   return filename
+
+def remove_record_by_id(ident):
+  db = TinyDB(directory/dbname)
+  item = db.table('files').get(doc_id=int(ident))
+  if item == None:
+    return None
+
+  filepath = get_single_record_path(ident, item['Buc_name'])
+  if 'Buc_source' in item:
+    sourcepath = get_single_record_src_path(ident, item['Buc_source'])
+  else:
+    sourcepath = None
+
+  print("*** Deleting record " + str(ident) + " which lives at " + str(filepath))
+
+  # Now we delete.
+  db.table('files').remove(doc_ids=[int(ident)])
+  filepath.unlink()
+  if not(sourcepath == None):
+    sourcepath.unlink()
+
+  print("*** Deleted.")
+  return True
