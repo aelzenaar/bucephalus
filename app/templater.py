@@ -51,7 +51,7 @@ def vacuum(filename,output=None):
   author = metadata['template']['Buc_author']
   tags = metadata['template']['Buc_tags']
   templatename = metadata['template']['Buc_hp']
-  metadata.update(dbops.addrecord(title, author, tags, pdfname, filename, None, True))
+  metadata.update(dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
 
   templatepath = directory1/(templatename + ".mustache")
   if not (templatepath.exists()):
@@ -75,9 +75,9 @@ def vacuum(filename,output=None):
   if (output == None):
     dbops.addrecord(title, author, tags, pdfname, filename, metadata, False)
   else:
-    copyfile(filename, Path(output).with_suffix('.tex'))
-    dbops.addrecord(title, author, tags, pdfname, Path(output).with_suffix('.tex'), metadata, False)
-    Path(output).with_suffix('.tex').unlink()
+    copyfile(filename, Path(pdfname).with_suffix('.tex'))
+    dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
+    Path(pdfname).with_suffix('.tex').unlink()
 
 if len(sys.argv) < 2:
   print("Bucephalus Vacuum TeX Script")
