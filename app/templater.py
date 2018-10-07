@@ -14,14 +14,20 @@ import sys
 directory1=Path.home()/"bucephalus"/"prototypes"
 directory2=Path(__file__).parent/"prototypes"
 
+defaults=Path.home()/"bucephalus"/"defaults.json"
+
 def vacuum(filename):
   if not(Path(filename).suffix == '.tex'):
     print("Include the .tex suffix on the end of the file: " + str(filename),file=sys.stderr)
 
-  metadata = {}
+  decoder = json.JSONDecoder()
+  metadata = {'template':{}}
+  if defaults.exists():
+    with open(defaults) as f:
+      metadata['template'].update(decoder.decode(f.read()))
+
   with open(filename) as f:
     inContent = False
-    decoder = json.JSONDecoder()
     userdef = ""
     content = ""
     for line in f:
@@ -33,7 +39,7 @@ def vacuum(filename):
       else:
         content = content + line
 
-    metadata["template"] = decoder.decode(userdef)
+    metadata["template"].update(decoder.decode(userdef))
     metadata["content"] = content
 
   pdfname = Path(filename).with_suffix('.pdf')
