@@ -69,7 +69,7 @@ def v_time(year=None,month=None,day=None,meat=None):
   for tag in item['Buc_tags']:
     tags.append({'name': tag, 'loc': "/v/tag/" + tag})
   timestamp = str(item['ts_year'])+str('/')+str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' + str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
-  source = item['Buc_source'] if 'Buc_source' in item else None
+  source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
                          article_raw=rawname, article_src=source, tags=tags,
@@ -82,11 +82,15 @@ def v_time(year=None,month=None,day=None,meat=None):
 @app.route('/r/')
 @app.route('/r/<ident>/')
 @app.route('/r/<ident>/<meat>')
-def r_file(ident=None,meat=None):
+@app.route('/r/<ident>/<meat>/<src>')
+def r_file(ident=None,meat=None,src=None):
   if (ident == None) | (meat == None):
     return redirect(url_for('index'))
 
-  filename = dbops.get_single_record_path(ident,meat)
+  if(meat == 'src'):
+    filename = dbops.get_single_record_src_path(ident,src)
+  else:
+    filename = dbops.get_single_record_path(ident,meat)
   if(filename == None):
     return abort(404)
   with open(filename, 'rb') as f:

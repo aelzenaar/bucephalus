@@ -1,0 +1,40 @@
+\documentclass[a4paper,10pt]{amsart}
+
+\usepackage[english]{babel}
+\usepackage[autostyle, english=british]{csquotes}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{commath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{adjustbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage[parfill]{parskip}
+\usepackage{mathtools}
+
+\usepackage{tikz}
+
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\lhead{{{Buc_author}}\\{{template.studentid}}}
+\chead{{{template.course}}, {{template.semester}}}
+\rhead{Homework 3}
+\cfoot{Page \thepage of }
+
+\author{{{Buc_author}}\\ {{template.studentid}} \quad {{template.upi}}\\{{template.course}}}
+\date{Due on Thursday 4 October 2018}
+\title{Homework {{template.asstno}}}
+
+\begin{document}
+
+\maketitle
+
+{{content}}
+
+\end{document}

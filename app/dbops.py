@@ -11,25 +11,30 @@ from tinydb import TinyDB, Query, where
 directory=Path.home()/"bucephalus"
 dbname="database.db"
 
-def addrecord(title, author, tags, meat, source=None):
+def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False):
   meatpath = Path(meat)
+
+  if (metadata == None):
+    # Sort out metadata
+    date = datetime.datetime.today()
+    metadata = {'ts_year':date.year,
+                'ts_month':date.month,
+                'ts_day':date.day,
+                'ts_hour':date.hour,
+                'ts_minute':date.minute,
+                'ts_second':date.second,
+                'Buc_tags': tags,
+                'Buc_author': author,
+                'Buc_title': title,
+                'Buc_name': meatpath.name}
+    if not(source == None):
+      srcpath = Path(source)
+      metadata['Buc_source'] = srcpath.name
+  if delay == True:
+    return metadata
+
   if not(meatpath.exists()):
     return None
-  # Sort out metadata
-  date = datetime.datetime.today()
-  metadata = {'ts_year':date.year,
-              'ts_month':date.month,
-              'ts_day':date.day,
-              'ts_hour':date.hour,
-              'ts_minute':date.minute,
-              'ts_second':date.second,
-              'Buc_tags': tags,
-              'Buc_author': author,
-              'Buc_title': title,
-              'Buc_name': meatpath.name}
-  if not(source == None):
-    srcpath = Path(source)
-    metadata['Buc_source'] = sourcepath.name
 
   # Make correct directory if it doesn't exist
   dd = Path(directory)
@@ -38,7 +43,7 @@ def addrecord(title, author, tags, meat, source=None):
   if not(dd.is_dir()):
     sys.exit("*** Data directory (" + directory + ") is not a directory.")
 
-  datedir = dd / str(date.year) / str(date.month) / str(date.day)
+  datedir = dd / str(metadata['ts_year']) / str(metadata['ts_month']) / str(metadata['ts_day'])
   if not(datedir.exists()):
     datedir.mkdir(parents=True)
   if not(datedir.is_dir()):
@@ -47,7 +52,13 @@ def addrecord(title, author, tags, meat, source=None):
   # Copy file to location, and sources if needed
   copyfile(meatpath, datedir / meatpath.name)
   if not(source == None):
-    copyfile(srcpath, datedir / 'src' / srcpath.name)
+    srcpath = Path(source)
+    srcdest = datedir / 'src'
+    if not(srcdest.exists()):
+      srcdest.mkdir()
+    if not(srcdest.is_dir()):
+      sys.exit("*** Source directory (" + directory + ") is not a directory.")
+    copyfile(srcpath, srcdest/srcpath.name)
 
   # Sort out database
   db = TinyDB(Path(directory)/dbname)
@@ -96,4 +107,15 @@ def get_single_record_path(ident, meat):
     return None
 
   filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/str(item['Buc_name'])
+  return filename
+
+def get_single_record_src_path(ident,src):
+  db = TinyDB(directory/dbname)
+  item = db.table('files').get(doc_id=int(ident))
+  if item == None:
+    return None
+  if not(src == str(item['Buc_source'])):
+    return None
+
+  filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/"src"/str(item['Buc_source'])
   return filename

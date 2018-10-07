@@ -1,0 +1,61 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% \usepackage[parfill]{parskip}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{siunitx}
+\DeclareSIUnit\year{yr}
+\DeclareSIUnit\foot{ft}
+\DeclareSIUnit\litre{\liter}
+
+\usepackage{lastpage}
+
+\usepackage{pgfplots}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage{commath}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{wasysym}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage[version=4]{mhchem}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\linespread{0.8}\small}
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+
+\newtheorem*{thm}{Theorem}
+\newtheorem*{iden}{Identity}
+\newtheorem*{lemma}{Lemma}
+\newtheorem*{obs}{Observation}
+% \theoremstyle*{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem*{ex}{Example}
+\newtheorem*{con}{Construction}
+\newtheorem*{alg}{Algorithm}
+
+% russian integral
+\usepackage{scalerel}
+\DeclareMathOperator*{\rint}{\scalerel*{\rotatebox{17}{$\!\int\!$}}{\int}}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{ {{ts_year}}/{{ts_month}}/{{ts_year}} }
+\chead{ {{Buc_name}} }
+\rhead{ {{Buc_author}} }
+
+\cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+
+\begin{document}
+\section*{ {{Buc_title}} }
+
+{{{content}}}
+
+\end{document}
