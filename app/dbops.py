@@ -63,7 +63,12 @@ def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False
   # Sort out database
   db = TinyDB(Path(directory)/dbname)
   metatable = db.table('files')
-  metatable.insert(metadata)
+  oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
+  if(oldrecord == None):
+    metatable.insert(metadata)
+  else:
+    metatable.update(metadata, doc_ids=[oldrecord.doc_id])
+
   return metatable
 
 def get_records_by_date(year=None, month=None, day=None, name=None):
