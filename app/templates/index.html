@@ -10,6 +10,17 @@ made in the past, it's quick and functional and the text is in a serif font.
   <li><a href="/v/grep">Examine by searching.</a></li>
   <li><a href="/v/raw">Behold by ID.</a></li>
 </ul>
+
+<h2>Random thing from StackExchange</h2>
+<h3>{{ randomse.qtitle }}</h3>
+{{randomse.qbody|safe}}
+<h3>Answer (score {{randomse.ascore}})</h3>
+{{randomse.abody|safe}}
+
+
+<p>Links: <a href="{{ randomse.qlink }}">question</a>&nbsp;<a href="{{randomse.alink}}">answer</a>
+<p>API quota remaining: {{randomse.quota}}
+
 {% endblock %}
 {% block footer %}
   {{timestamp}}

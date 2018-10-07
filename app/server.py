@@ -3,11 +3,14 @@ app = Flask(__name__)
 
 import sys
 
+import requests
+
 from pathlib import Path
 
 import calendar
 import magic
 from datetime import datetime
+import random
 
 import dbops
 
@@ -75,7 +78,17 @@ def r_file(ident=None,meat=None,src=None):
 # Index endpoint.
 @app.route('/')
 def index():
-  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"))
+  questionid = random.choice([22299, 1083, 7155, 2144, 14574, 879, 16829, 47214, 44326, 29006])
+  question = requests.get('https://api.stackexchange.com/questions/'+str(questionid)+'?site=mathoverflow.net&filter=!gB66oJbwvcXSH(Ni5Ti9FQ4PaxMw.WKlBWC').json()['items'][0]
+  ansid = random.choice(question['answers'])['answer_id']
+
+  fullrequest = requests.get('https://api.stackexchange.com/answers/' + str(ansid) + '?site=mathoverflow.net&filter=!Fcb(61J.xH8s_mAfP-LmG*7fPe').json()
+  answer = fullrequest['items'][0]
+
+  randomse = {'qtitle': question['title'], 'qbody': question['body'], 'qlink': question['link'],
+              'abody': answer['body'], 'alink': answer['link'], 'ascore': answer['score'], 'quota': fullrequest['quota_remaining'] }
+
+  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"), randomse=randomse)
 
 # If we don't specify a view, we probably want the index.
 @app.route('/v/')
