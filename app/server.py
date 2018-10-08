@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, abort, render_template, make_response, request
+from flask import Flask, redirect, url_for, abort, render_template, make_response, request, escape
 app = Flask(__name__)
 
 import sys
@@ -41,7 +41,7 @@ def render_article(item, breadcrumbs):
 
   tags = []
   for tag in item['Buc_tags']:
-    tags.append({'name': tag, 'loc': "/v/tag/" + tag})
+    tags.append({'name': str(escape(tag)).replace(' ', '&nbsp;'), 'loc': "/v/tag/" + tag})
   timestamp = timestamp_for_item(item)
   source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
