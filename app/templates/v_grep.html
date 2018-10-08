@@ -1,0 +1,16 @@
+{%extends "base.html" %}
+{% set page_title = "View by searching" %}
+{% block content %}
+  <h2>Search content of text files and source files</h2>
+  <form method="post" action="{{url_for('v_grep_post')}}">
+    Query (accepts regex's): <input type="text" name="q"/>
+    <input type="submit" value="Search">
+  </form>
+  {% if searchtype == "empty" %}
+  <div class="error">Query returned no results: {{q}}</div>
+  {% endif %}
+  {% if searchtype == "noquery" %}
+  <div class="error">You clicked the button without entering anything.</div>
+  <img src="/static/error1.jpg"/>
+  {% endif %}
+{% endblock %}

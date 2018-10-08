@@ -13,6 +13,8 @@ from datetime import datetime
 import random
 
 import dbops
+import config
+import search
 
 def timestamp_for_item(item):
   return str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
@@ -201,3 +203,69 @@ def v_tag(tags=None, ident=None, meat=None):
                                {'loc': url_for('v_tag', tags="/".join(tags)), 'name': nice_tag_list},
                                {'loc': url_for('v_tag', tags="/".join(tags), ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
   return abort(501)
+
+# Endpoint to handle search-by-content. Redirects back to the main endpoint.
+@app.route('/v/grep/post', methods=['POST'])
+def v_grep_post():
+  print(url_for('v_grep', q = request.form['q']))
+  if(request.form['q'] == ''):
+    return redirect(url_for('v_grep', q = '#'))
+
+  return redirect(url_for('v_grep', q = request.form['q']))
+
+# Main endpoint for search-by-ID
+@app.route('/v/grep/')
+@app.route('/v/grep/<q>/')
+@app.route('/v/grep/<q>/<ident>/<meat>')
+def v_grep(q=None,ident=None,meat=None):
+  if q == None:
+    return render_template("v_grep.html", searchtype="initial")
+  if q == '#':
+    return render_template("v_grep.html", searchtype="noquery")
+
+  # One of ident and meat was provided but not the other
+  if (ident == None) != (meat == None):
+    return abort(404)
+
+  # Query, ident, and meat provided.
+  if not(ident == None) and not(meat == None):
+    item = dbops.get_record_by_id(ident)
+    if(item == None):
+      return abort(404)
+    if not(item['Buc_name'] == meat):
+      return abort(404)
+    return render_article(item, [{'loc': url_for('v_grep'),'name':'By grep'},
+                                {'loc': url_for('v_grep', q=q), 'name': q},
+                                {'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
+
+  # So we have a query to search.
+  files = search.search_files_for_string(q)
+  if(files == []):
+    return render_template("v_grep.html", searchtype="empty", q=q)
+
+  items = []
+  for f in files:
+    parts = f.relative_to(config.get_user_data_dir()).parts
+    print(parts)
+    if len(parts) < 4:
+      continue
+    print("go")
+    year = parts[0]
+    month = parts[1]
+    day = parts[2]
+    if(str(parts[3]) == 'src'):
+      meat = parts[4]
+    else:
+      meat = parts[3]
+    print(meat)
+    item = dbops.get_record_by_file(year, month, day, meat)
+    if not(item == None):
+      items.append({'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']),
+                    'name': menu_name_for_item(item)})
+  print(items)
+  if (items == []):
+    return render_template("v_grep.html", searchtype="empty", q=q)
+
+  return render_template('viewer.html', items=items, view_name='grep', breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
+                                                                                     {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
+                         viewernotes="<p>Did you know: the search functionality doesn't actually work.</p>")

@@ -8,7 +8,9 @@ from pathlib import Path
 
 from tinydb import TinyDB, Query, where
 
-directory=Path.home()/"bucephalus"
+import config
+
+directory=config.get_user_data_dir()
 dbname="database.db"
 
 def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False):
@@ -167,3 +169,7 @@ def remove_record_by_id(ident):
 
   print("*** Deleted.")
   return True
+
+def get_record_by_file(year, month, day, filename):
+  db = TinyDB(directory/dbname)
+  return db.table('files').get((where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))

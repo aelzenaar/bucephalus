@@ -7,6 +7,8 @@ cp app/dbops.py $INSTALLDIR
 cp app/bucadd.py $INSTALLDIR
 cp app/server.py $INSTALLDIR
 cp app/bucrm.py $INSTALLDIR
+cp app/config.py $INSTALLDIR
+cp app/search.py $INSTALLDIR
 cp app/templater.py $INSTALLDIR/bucvac.py
 cp -R app/static $INSTALLDIR
 cp -R app/templates $INSTALLDIR

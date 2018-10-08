@@ -8,14 +8,15 @@ from pathlib import Path
 from shutil import copyfile
 
 import dbops
+import config
 
 import os
 import sys
 
-directory1=Path.home()/"bucephalus"/"prototypes"
-directory2=Path(__file__).parent/"prototypes"
+directory1=config.get_user_data_dir()/"prototypes"
+directory2=config.get_install_dir()/"prototypes"
 
-defaults=Path.home()/"bucephalus"/"defaults.json"
+defaults=config.get_user_data_dir()/"defaults.json"
 
 def vacuum(filename,output=None):
   try:
