@@ -17,12 +17,19 @@ import config
 import search
 
 def timestamp_for_item(item):
-  return str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
-         str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
+  timestamp = str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
+              str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
 
+  if('ts_year2' in item):
+    modified  = str(item['ts_year2']) + str('/') + str(item['ts_month2']) + str('/') + str(item['ts_day2']) + ' @ ' +\
+                str(item["ts_hour2"]) + ":" + str(item['ts_minute2']) + ":" + str(item['ts_second2'])
+  else:
+    modified = timestamp
+
+  return timestamp,modified
 
 def menu_name_for_item(item):
-  return item['Buc_name'] + " (modified: "+ timestamp_for_item(item) + "); tags: " + human_readable_tags(item['Buc_tags'])
+  return item['Buc_name'] + " (modified: "+ timestamp_for_item(item)[1] + "); tags: " + human_readable_tags(item['Buc_tags'])
 
 def human_readable_tags(tags):
   tags = ['\"{0}\"'.format(tag) for tag in tags]
@@ -42,12 +49,12 @@ def render_article(item, breadcrumbs):
   tags = []
   for tag in item['Buc_tags']:
     tags.append({'name': str(escape(tag)).replace(' ', '&nbsp;'), 'loc': "/v/tag/" + tag})
-  timestamp = timestamp_for_item(item)
+  timestamp, modified = timestamp_for_item(item)
   source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
                          article_raw=rawname, article_src=source, article_author=item['Buc_author'], article_id=item.doc_id, tags=tags,
-                         breadcrumbs=breadcrumbs)
+                         breadcrumbs=breadcrumbs, article_modded=modified)
 
 # Endpoint to pull a specific raw file (i.e. no UI) out of the database.
 @app.route('/r/')

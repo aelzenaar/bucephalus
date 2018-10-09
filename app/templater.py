@@ -1,5 +1,6 @@
 import json
 import pystache
+import argparse
 
 import tempfile
 import subprocess
@@ -18,7 +19,7 @@ directory2=config.get_install_dir()/"prototypes"
 
 defaults=config.get_user_data_dir()/"defaults.json"
 
-def vacuum(filename,output=None):
+def vacuum(filename,output=None,update=None):
   try:
     warned = False
     if not(Path(filename).suffix == '.tex'):
@@ -60,7 +61,10 @@ def vacuum(filename,output=None):
     author = metadata['template']['Buc_author']
     tags = metadata['template']['Buc_tags']
     templatename = metadata['template']['Buc_hp']
-    metadata.update(dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
+    if update == None:
+      metadata.update(dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
+    else:
+      metadata.update(dbops.get_record_by_id(int(update)))
 
     templatepath = directory1/(templatename + ".mustache")
     if not (templatepath.exists()):
@@ -83,21 +87,36 @@ def vacuum(filename,output=None):
     metadata.pop('content', None)
     metadata.pop('template', None)
     if (output == None):
-      dbops.addrecord(title, author, tags, pdfname, filename, metadata, False)
+      if (update == None):
+        dbops.addrecord(title, author, tags, pdfname, filename, metadata, False)
+      else:
+        dbops.updaterecord(update, pdfname, filename)
     else:
       copyfile(filename, Path(pdfname).with_suffix('.tex'))
-      dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
+      if (update == None):
+        dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
+      else:
+        dbops.updaterecord(update, Path(pdfname).with_suffix('.tex'), filename)
       Path(pdfname).with_suffix('.tex').unlink()
   except:
     if(warned):
       print("*** Note: Something failed. Bucephalus printed a warning earlier that might help.")
     raise
 
-if len(sys.argv) < 2:
-  print("Bucephalus Vacuum TeX Script")
-  print("Usage: " + sys.argv[0] + " <filename.tex> <optional output filename>")
-  sys.exit()
+parser = argparse.ArgumentParser(description='Bucephalus Vacuum TeX Script.')
+parser.add_argument('filename', metavar='FILENAME', type=str, nargs=1,
+                   help='filename for processing')
+parser.add_argument('-o', metavar='OUTPUTFILE', type=str, nargs=1,
+                   help='optional output filename', default=None)
+parser.add_argument('-u', metavar='UPDATEIDENT', type=int, nargs=1,
+                   help='id to update', default=None)
 
-outputname = (sys.argv[2] if len(sys.argv) > 2 else None)
+args = vars(parser.parse_args())
 
-vacuum(sys.argv[1], outputname)
+print(args)
+
+update = args['u'][0] if args['u'] != None else None
+output = args['o'][0] if args['o'] != None else None
+
+vacuum(args['filename'][0], output,update)
+

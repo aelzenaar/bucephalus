@@ -13,18 +13,36 @@ import config
 directory=config.get_user_data_dir()
 dbname="database.db"
 
+def updaterecord(ident, meat, source=None):
+  db = TinyDB(Path(directory)/dbname)
+  metatable = db.table('files')
+  oldrecord = get_record_by_id(ident)
+  if(oldrecord == None):
+    return False
+
+  date = datetime.datetime.today()
+  oldrecord['ts_year2'] = date.year
+  oldrecord['ts_month2'] = date.month
+  oldrecord['ts_day2'] = date.day
+  oldrecord['ts_hour2'] = date.hour
+  oldrecord['ts_minute2'] = date.minute
+  oldrecord['ts_second2'] = date.second
+
+  addrecord(oldrecord['Buc_title'], oldrecord['Buc_author'], oldrecord['Buc_tags'], meat, source, oldrecord, False)
+  metatable.update(oldrecord, doc_ids=[oldrecord.doc_id])
+
 def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False):
   meatpath = Path(meat)
 
   if (metadata == None):
     # Sort out metadata
     date = datetime.datetime.today()
-    metadata = {'ts_year':date.year,
-                'ts_month':date.month,
-                'ts_day':date.day,
-                'ts_hour':date.hour,
-                'ts_minute':date.minute,
-                'ts_second':date.second,
+    metadata = {'ts_year':date.year,     'ts_year2':date.year,
+                'ts_month':date.month,   'ts_month2':date.month,
+                'ts_day':date.day,       'ts_day2':date.day,
+                'ts_hour':date.hour,     'ts_hour2':date.hour,
+                'ts_minute':date.minute, 'ts_minute2':date.minute,
+                'ts_second':date.second, 'ts_second2':date.second,
                 'Buc_tags': tags,
                 'Buc_author': author,
                 'Buc_title': title,
