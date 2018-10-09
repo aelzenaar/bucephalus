@@ -32,14 +32,18 @@
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 \newcommand{\union}[1]{\cup{#1}}
 \newcommand{\inter}[1]{\cap{#1}}
+\newcommand{\aabs}[1]{\abs{\abs{#1}}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\N}{\mathbb{N}}
 
+\DeclareMathOperator{\cl}{cl}
+
 \newtheorem*{thm}{Theorem}
 \newtheorem*{iden}{Identity}
 \newtheorem*{lemma}{Lemma}
+\newtheorem*{prp}{Proposition}
 \newtheorem*{obs}{Observation}
 \newtheorem*{claim}{Claim}
 \theoremstyle{definition}
@@ -47,6 +51,7 @@
 \newtheorem*{ex}{Example}
 \newtheorem*{con}{Construction}
 \newtheorem*{alg}{Algorithm}
+\newtheorem*{exercise}{Exercise}
 
 % russian integral
 \usepackage{scalerel}
