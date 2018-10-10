@@ -96,7 +96,7 @@ def vacuum(filename,output=None,update=None):
       if (update == None):
         dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
       else:
-        dbops.updaterecord(update, Path(pdfname).with_suffix('.tex'), filename)
+        dbops.updaterecord(update, pdfname, Path(pdfname).with_suffix('.tex'))
       Path(pdfname).with_suffix('.tex').unlink()
   except:
     if(warned):
