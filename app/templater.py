@@ -65,6 +65,9 @@ def vacuum(filename,output=None,update=None):
       metadata.update(dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
     else:
       metadata.update(dbops.get_record_by_id(int(update)))
+      if(metadata['Buc_name'] != Path(pdfname).with_suffix('.tex')):
+        print("Record ID " + str(update) + " with filename " + metadata['Buc_name'] + " doesn't match filename to be added: " + pdfname)
+        sys.exit(1)
 
     templatepath = directory1/(templatename + ".mustache")
     if not (templatepath.exists()):
