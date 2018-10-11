@@ -1,31 +1,64 @@
 \documentclass[a4paper,10pt]{amsart}
 
-\usepackage[english]{babel}
-\usepackage[autostyle, english=british]{csquotes}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{fontspec}
+\usepackage{microtype}
+
+% \usepackage[parfill]{parskip}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath}
-\usepackage{commath}
-\usepackage{amssymb}
-\usepackage{gensymb}
-\usepackage{amsthm}
-\usepackage{microtype}
-\usepackage{lmodern}
-\usepackage{adjustbox}
-\usepackage[hidelinks]{hyperref}
-\usepackage[parfill]{parskip}
-\usepackage{mathtools}
-\usepackage{fontspec}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\DeclareSIUnit\year{yr}
+\DeclareSIUnit\foot{ft}
+\DeclareSIUnit\litre{\liter}
 
-\usepackage{tikz}
+\usepackage{lastpage}
+
+\usepackage{pgfplots}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage{commath}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{wasysym}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage[version=4]{mhchem}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\linespread{0.8}\small}
 
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
-\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-\newcommand{\union}[1]{\cup{#1}}
-\newcommand{\inter}[1]{\cap{#1}}
+
+
+\newcommand{\union}{\cup}
+\newcommand{\inter}{\cap}
+\DeclarePairedDelimiter\aabs{\lVert}{\rVert}%
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\N}{\mathbb{N}}
+
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\diam}{diam}
+
+% russian integral
+\usepackage{scalerel}
+\DeclareMathOperator*{\rint}{\scalerel*{\rotatebox{17}{$\!\int\!$}}{\int}}
+
+\newtheorem*{thm}{Theorem}
+\newtheorem*{iden}{Identity}
+\newtheorem*{lemma}{Lemma}
+\newtheorem*{prp}{Proposition}
+\newtheorem*{obs}{Observation}
+\newtheorem*{claim}{Claim}
+\theoremstyle{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem*{ex}{Example}
+\newtheorem*{con}{Construction}
+\newtheorem*{alg}{Algorithm}
+\newtheorem*{exercise}{Exercise}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}

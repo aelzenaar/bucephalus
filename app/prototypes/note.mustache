@@ -1,14 +1,15 @@
 \documentclass{article}
 
+\usepackage{amsthm}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{fontspec}
 \usepackage{microtype}
 
 % \usepackage[parfill]{parskip}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-\usepackage{amsthm}
 \usepackage{siunitx}
 \DeclareSIUnit\year{yr}
 \DeclareSIUnit\foot{ft}
@@ -30,8 +31,10 @@
 \lstset{basicstyle=\ttfamily\linespread{0.8}\small}
 
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
-\newcommand{\union}[1]{\cup{#1}}
-\newcommand{\inter}[1]{\cap{#1}}
+
+
+\newcommand{\union}{\cup}
+\newcommand{\inter}{\cap}
 \DeclarePairedDelimiter\aabs{\lVert}{\rVert}%
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -39,6 +42,10 @@
 \newcommand{\N}{\mathbb{N}}
 
 \DeclareMathOperator{\cl}{cl}
+
+% russian integral
+\usepackage{scalerel}
+\DeclareMathOperator*{\rint}{\scalerel*{\rotatebox{17}{$\!\int\!$}}{\int}}
 
 \newtheorem*{thm}{Theorem}
 \newtheorem*{iden}{Identity}
@@ -52,10 +59,6 @@
 \newtheorem*{con}{Construction}
 \newtheorem*{alg}{Algorithm}
 \newtheorem*{exercise}{Exercise}
-
-% russian integral
-\usepackage{scalerel}
-\DeclareMathOperator*{\rint}{\scalerel*{\rotatebox{17}{$\!\int\!$}}{\int}}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
