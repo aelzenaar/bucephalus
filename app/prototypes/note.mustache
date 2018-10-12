@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{amsthm}
+\usepackage{amssymb}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{fontspec}
@@ -42,27 +43,43 @@
 \newcommand{\N}{\mathbb{N}}
 
 \DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\lcm}{lcm}
 
 % russian integral
 \usepackage{scalerel}
 \DeclareMathOperator*{\rint}{\scalerel*{\rotatebox{17}{$\!\int\!$}}{\int}}
 
-\newtheorem*{thm}{Theorem}
-\newtheorem*{iden}{Identity}
-\newtheorem*{lemma}{Lemma}
-\newtheorem*{prp}{Proposition}
-\newtheorem*{obs}{Observation}
-\newtheorem*{claim}{Claim}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{iden}[thm]{Identity}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{prp}[thm]{Proposition}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem*{thm*}{Theorem}
+\newtheorem*{iden*}{Identity}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{prp*}{Proposition}
+\newtheorem*{obs*}{Observation}
+\newtheorem*{claim*}{Claim}
 \theoremstyle{definition}
-\newtheorem*{defn}{Definition}
-\newtheorem*{ex}{Example}
-\newtheorem*{con}{Construction}
-\newtheorem*{alg}{Algorithm}
-\newtheorem*{exercise}{Exercise}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{con}[thm]{Construction}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{exercise}[thm]{Exercise}
+\newtheorem*{defn*}{Definition}
+\newtheorem*{ex*}{Example}
+\newtheorem*{con*}{Construction}
+\newtheorem*{alg*}{Algorithm}
+\newtheorem*{exercise*}{Exercise}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{ {{ts_year}}/{{ts_month}}/{{ts_year}} }
+\lhead{ {{ts_year}}/{{ts_month}}/{{ts_day}} }
 \chead{ {{Buc_name}} }
 \rhead{ {{Buc_author}} }
 
