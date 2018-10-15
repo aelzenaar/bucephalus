@@ -18,11 +18,11 @@ import search
 
 def timestamp_for_item(item):
   timestamp = str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
-              str(item["ts_hour"]) + ":" + str(item['ts_minute']) + ":" + str(item['ts_second'])
+              str(item["ts_hour"]).zfill(2) + ":" + str(item['ts_minute']).zfill(2) + ":" + str(item['ts_second']).zfill(2)
 
   if('ts_year2' in item):
     modified  = str(item['ts_year2']) + str('/') + str(item['ts_month2']) + str('/') + str(item['ts_day2']) + ' @ ' +\
-                str(item["ts_hour2"]) + ":" + str(item['ts_minute2']) + ":" + str(item['ts_second2'])
+                str(item["ts_hour2"]).zfill(2) + ":" + str(item['ts_minute2']).zfill(2) + ":" + str(item['ts_second2']).zfill(2)
   else:
     modified = timestamp
 
