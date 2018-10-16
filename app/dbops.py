@@ -13,7 +13,50 @@ import config
 directory=config.get_user_data_dir()
 dbname="database.db"
 
-def updaterecord(ident, meat, source=None):
+# Write the given metadata into the database, overwriting old records.
+def write_metadata(metadata):
+  db = TinyDB(Path(directory)/dbname)
+  metatable = db.table('files')
+  oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
+  if(oldrecord == None):
+    metatable.insert(metadata)
+  else:
+    metatable.update(metadata, doc_ids=[oldrecord.doc_id])
+
+
+# Copy a file into the database, based on the given metadata; check for overwriting if overwrite == true.
+def add_file(metadata, overwrite, meatpath, source = None):
+  dd = Path(directory)
+  if not(dd.exists()):
+    dd.mkdir()
+  if not(dd.is_dir()):
+    sys.exit("*** Data directory (" + directory + ") is not a directory.")
+
+  datedir = dd / str(metadata['ts_year']) / str(metadata['ts_month']) / str(metadata['ts_day'])
+  if (not overwrite) and (datedir / meatpath.name).exists():
+    sys.exit("*** Overwrite aborted: " + str(datedir / meatpath.name))
+  if not(datedir.exists()):
+    datedir.mkdir(parents=True)
+  if not(datedir.is_dir()):
+    sys.exit("*** Datestamp directory (" + directory + ") is not a directory.")
+
+  # Copy file to location, and sources if needed
+  copyfile(meatpath, datedir / meatpath.name)
+  if not(source == None):
+    srcpath = Path(source)
+    srcdest = datedir / 'src'
+    if not(srcdest.exists()):
+      srcdest.mkdir()
+    if not(srcdest.is_dir()):
+      sys.exit("*** Source directory (" + directory + ") is not a directory.")
+    copyfile(srcpath, srcdest/srcpath.name)
+
+# Open an item for reading.
+def open_read(item):
+  return open(dd / str(item['ts_year']) / str(item['ts_month']) / str(item['ts_day']) / str(item['Buc_name']), 'rb')
+
+# Update an existing record.
+def update_record(ident, meat, source=None):
   db = TinyDB(Path(directory)/dbname)
   metatable = db.table('files')
   oldrecord = get_record_by_id(ident)
@@ -28,11 +71,13 @@ def updaterecord(ident, meat, source=None):
   oldrecord['ts_minute2'] = date.minute
   oldrecord['ts_second2'] = date.second
 
-  addrecord(oldrecord['Buc_title'], oldrecord['Buc_author'], oldrecord['Buc_tags'], meat, source, oldrecord, False)
-  metatable.update(oldrecord, doc_ids=[oldrecord.doc_id])
+  add_file(oldrecord, True, Path(meat), Path(source))
+  write_metadata(oldrecord)
 
-def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False):
+# Create a new record, try not to overwrite existing stuff.
+def add_record(title, author, tags, meat, source=None, metadata=None, delay=False):
   meatpath = Path(meat)
+  srcpath = None
 
   if (metadata == None):
     # Sort out metadata
@@ -56,41 +101,12 @@ def addrecord(title, author, tags, meat, source=None, metadata=None, delay=False
   if not(meatpath.exists()):
     return None
 
-  # Make correct directory if it doesn't exist
-  dd = Path(directory)
-  if not(dd.exists()):
-    dd.mkdir()
-  if not(dd.is_dir()):
-    sys.exit("*** Data directory (" + directory + ") is not a directory.")
+  add_file(metadata, False, meatpath, srcpath)
+  write_metadata(metadata)
 
-  datedir = dd / str(metadata['ts_year']) / str(metadata['ts_month']) / str(metadata['ts_day'])
-  if not(datedir.exists()):
-    datedir.mkdir(parents=True)
-  if not(datedir.is_dir()):
-    sys.exit("*** Datestamp directory (" + directory + ") is not a directory.")
+  return metadata
 
-  # Copy file to location, and sources if needed
-  copyfile(meatpath, datedir / meatpath.name)
-  if not(source == None):
-    srcpath = Path(source)
-    srcdest = datedir / 'src'
-    if not(srcdest.exists()):
-      srcdest.mkdir()
-    if not(srcdest.is_dir()):
-      sys.exit("*** Source directory (" + directory + ") is not a directory.")
-    copyfile(srcpath, srcdest/srcpath.name)
-
-  # Sort out database
-  db = TinyDB(Path(directory)/dbname)
-  metatable = db.table('files')
-  oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
-  if(oldrecord == None):
-    metatable.insert(metadata)
-  else:
-    metatable.update(metadata, doc_ids=[oldrecord.doc_id])
-
-  return metatable
-
+# If tags==None, return list of all tags; otherwise return intersection of given tags.
 def get_records_by_tag(tags=None):
   db = TinyDB(Path(directory)/dbname).table('files')
   if tags == None:
@@ -136,6 +152,7 @@ def get_records_by_date(year=None, month=None, day=None, name=None):
 
   return db.get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & (where('Buc_name') == name))
 
+# Return metadata for given ID
 def get_record_by_id(ident):
   db = TinyDB(directory/dbname)
   item = db.table('files').get(doc_id=int(ident))
@@ -143,6 +160,7 @@ def get_record_by_id(ident):
     return None
   return item
 
+# Return path to actual file stored based on id and filename
 def get_single_record_path(ident, meat):
   db = TinyDB(directory/dbname)
   item = db.table('files').get(doc_id=int(ident))
@@ -154,6 +172,7 @@ def get_single_record_path(ident, meat):
   filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/str(item['Buc_name'])
   return filename
 
+# Return path to actual SOURCE file stored based on id and filename
 def get_single_record_src_path(ident,src):
   db = TinyDB(directory/dbname)
   item = db.table('files').get(doc_id=int(ident))
@@ -165,6 +184,7 @@ def get_single_record_src_path(ident,src):
   filename = directory/str(item['ts_year'])/str(item['ts_month'])/str(item['ts_day'])/"src"/str(item['Buc_source'])
   return filename
 
+# Delete given record
 def remove_record_by_id(ident):
   db = TinyDB(directory/dbname)
   item = db.table('files').get(doc_id=int(ident))
@@ -188,6 +208,7 @@ def remove_record_by_id(ident):
   print("*** Deleted.")
   return True
 
+# Get record based on date and filename.
 def get_record_by_file(year, month, day, filename):
   db = TinyDB(directory/dbname)
   return db.table('files').get((where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))

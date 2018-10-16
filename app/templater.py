@@ -62,7 +62,7 @@ def vacuum(filename,output=None,update=None):
     tags = metadata['template']['Buc_tags']
     templatename = metadata['template']['Buc_hp']
     if update == None:
-      metadata.update(dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
+      metadata.update(dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
     else:
       metadata.update(dbops.get_record_by_id(int(update)))
       if(metadata['Buc_name'] != str(pdfname)):
@@ -91,15 +91,15 @@ def vacuum(filename,output=None,update=None):
     metadata.pop('template', None)
     if (output == None):
       if (update == None):
-        dbops.addrecord(title, author, tags, pdfname, filename, metadata, False)
+        dbops.add_record(title, author, tags, pdfname, filename, metadata, False)
       else:
-        dbops.updaterecord(update, pdfname, filename)
+        dbops.update_record(update, pdfname, filename)
     else:
       copyfile(filename, Path(pdfname).with_suffix('.tex'))
       if (update == None):
-        dbops.addrecord(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
+        dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
       else:
-        dbops.updaterecord(update, pdfname, Path(pdfname).with_suffix('.tex'))
+        dbops.update_record(update, pdfname, Path(pdfname).with_suffix('.tex'))
       Path(pdfname).with_suffix('.tex').unlink()
   except:
     if(warned):
