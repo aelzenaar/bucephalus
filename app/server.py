@@ -1,9 +1,11 @@
 from flask import Flask, redirect, url_for, abort, render_template, make_response, request, escape
+from werkzeug.exceptions import HTTPException
 app = Flask(__name__)
 
 import sys
 
 import requests
+from http import HTTPStatus
 
 from pathlib import Path
 
@@ -158,12 +160,16 @@ def v_time(year=None,month=None,day=None,meat=None):
   items = []
   if(year == None):
     years = dbops.get_records_by_date()
+    if not years:
+      abort(404)
     for year in years:
       items.append({'loc': url_for('v_time', year=str(year)), 'name': year})
     return render_template('viewer.html',items=items,view_name='year', breadcrumbs=[{'loc':url_for('v_time'),'name':'By date', 'current':1}], viewernotes=get_fortune())
 
   if(month == None):
     months = dbops.get_records_by_date(year)
+    if not months:
+      abort(404)
     for month in months:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month)),'name':calendar.month_name[int(month)]})
     return render_template('viewer.html',items=items,view_name='month',
@@ -174,6 +180,8 @@ def v_time(year=None,month=None,day=None,meat=None):
     days = dbops.get_records_by_date(year, month)
     for day in days:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month), day=str(day)), 'name': day})
+    if not days:
+      abort(404)
     return render_template('viewer.html',items=items,view_name='day',
                            breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                         {'loc': url_for('v_time', year=str(year)), 'name': year},
@@ -182,6 +190,8 @@ def v_time(year=None,month=None,day=None,meat=None):
 
   if(meat == None):
     docs = dbops.get_records_by_date(year, month, day)
+    if not docs:
+      abort(404)
     for doc in docs:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month), day=str(day), meat=doc['Buc_name']),
                     'name': menu_name_for_item(doc)})
@@ -230,16 +240,20 @@ def v_tag(tags=None, ident=None, meat=None):
   items = []
   if(tags == None):
     tags = dbops.get_records_by_tag()
+    if not tags:
+      abort(404)
     for tag in tags:
       items.append({'loc': url_for('v_tag', tags=tag), 'name': tag})
     return render_template('viewer.html',items=items, view_name='tag', breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag', 'current':1}],
                            viewernotes=get_fortune())
 
   tags = tags.split('/')
-  nice_tag_list = nice_tag_list = human_readable_tags(tags)
+  nice_tag_list = human_readable_tags(tags)
 
   if (ident == None):
     docs = dbops.get_records_by_tag(tags)
+    if not docs:
+      abort(404)
     for doc in docs:
       items.append({'loc': url_for('v_tag', tags="/".join(tags), ident=doc.doc_id, meat=doc['Buc_name']),
                     'name': menu_name_for_item(doc)})
@@ -324,3 +338,12 @@ def v_grep(q=None,ident=None,meat=None):
   return render_template('viewer.html', items=items, view_name='grep', breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
                                                                                      {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
                                                                        viewernotes=get_fortune())
+
+@app.errorhandler(Exception)
+def handle_error(e):
+  if isinstance(e, HTTPException):
+    error = {'code': e.code, 'desc': HTTPStatus(e.code).phrase, 'long': HTTPStatus(e.code).description}
+    return render_template("error.html", error=error), e.code
+  else:
+    error = {'code': 500, 'desc': HTTPStatus(500).phrase + " (threw exception)", 'long': HTTPStatus(500).description + ": " + str(e)}
+    return render_template("error.html", error=error), 500

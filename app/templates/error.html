@@ -1,0 +1,7 @@
+{%extends "base.html" %}
+{% set page_title = "Error: "+ error.desc %}
+{% block content %}
+  <h2>{{error.code}}: {{error.desc}}</h2>
+  <p>{{error.long}}</p>
+  <a href="https://xkcd.com/1024/"><img src="https://imgs.xkcd.com/comics/error_code.png"/></a>
+{% endblock %}
