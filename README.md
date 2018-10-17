@@ -40,8 +40,13 @@ After installation, at the time of writing the following commands will be availa
 Some of these commands will check that you put sane values in. Some of them won't. Finding out which is which is a fun little game
 you can play if you don't care about your data. *If these commands go wrong, they may trample your database.*
 
-If you add two files with the same name on the same day, the later one will overwrite the earlier one and will take the same ID. This is
-by design, so that you don't end up with several slightly different copies of the same file.
+**Old behaviour.** ~~If you add two files with the same name on the same day, the later one will overwrite the earlier one and will take the same ID. This is
+by design, so that you don't end up with several slightly different copies of the same file.~~
+
+**New behaviour.** Adding a file with the same name as an existing file on the same day will now error out *at the database level* (there is a new `overwrite` flag
+that needs to be passed to `dbops.add_file` which is passed by `add_record` as false and `update_record` as true). You can use `bucvac -u UPDATEIDENT` (if you
+have a vacuumed TeX file to update) or `bucfup` (if you are adding a real file of some sort) to overwrite files and set the modification date. Adding files of
+the same name on different days adds new files, as before.
 
 ## Plan.
 [Project board](https://github.com/aelzenaar/bucephalus/projects/1)
