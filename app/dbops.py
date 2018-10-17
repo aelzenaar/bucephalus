@@ -25,7 +25,11 @@ def write_metadata(metadata):
 
 
 # Copy a file into the database, based on the given metadata; check for overwriting if overwrite == true.
-def add_file(metadata, overwrite, meatpath, source = None):
+def add_file(metadata, overwrite, filename, source = None):
+  meatpath = Path(filename)
+  if not meatpath.exists():
+    sys.exit("*** File (" + filename + ") does not exist.")
+
   dd = Path(directory)
   if not(dd.exists()):
     dd.mkdir()
@@ -62,6 +66,8 @@ def update_record(ident, meat, source=None):
   oldrecord = get_record_by_id(ident)
   if(oldrecord == None):
     return False
+  if(oldrecord['Buc_name'] != Path(meat).name):
+    print("*** Error: updating file with wrong name.")
 
   date = datetime.datetime.today()
   oldrecord['ts_year2'] = date.year
@@ -71,8 +77,9 @@ def update_record(ident, meat, source=None):
   oldrecord['ts_minute2'] = date.minute
   oldrecord['ts_second2'] = date.second
 
-  add_file(oldrecord, True, Path(meat), Path(source))
+  add_file(oldrecord, True, meat, source)
   write_metadata(oldrecord)
+  return True
 
 # Create a new record, try not to overwrite existing stuff.
 def add_record(title, author, tags, meat, source=None, metadata=None, delay=False):
