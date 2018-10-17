@@ -16,6 +16,60 @@ import dbops
 import config
 import search
 
+def get_fortune():
+  print("yes")
+  did_you_know = ["you can view multiple tags at once by appending them to the URL. For example: <code>/v/tag/tag1/tag2</code>.",
+                  "the search functionality doesn't actually work.",
+                  "the search functionality allows regular expressions.",
+                  "eventually, Bucephalus will integrate with git.",
+                  "eventually, Bucephalus will integrate with geogebra.",
+                  "eventually, Bucephalus will have more features.",
+                  "Bucephalus is running on Python " + str(sys.version_info[0]) + "." + str(sys.version_info[1]) + ".",
+                  "you can update files using the command line after adding them.",
+                  "if your files are lost, you'll wish you had a backup."]
+
+  return "Did you know: " + random.choice(did_you_know)
+
+def get_randomse():
+  try:
+    #raise "WOW ERROR OOPS"
+    questionid = random.choice([{'qid':22299, 'site':"mathoverflow.net"}, {'qid':1083, 'site':"mathoverflow.net"},
+                                {'qid':7155, 'site':"mathoverflow.net"}, {'qid':2144, 'site':"mathoverflow.net"},
+                                {'qid':14574, 'site':"mathoverflow.net"}, {'qid':879, 'site':"mathoverflow.net"},
+                                {'qid':16829, 'site':"mathoverflow.net"}, {'qid':47214, 'site':"mathoverflow.net"},
+                                {'qid':44326, 'site':"mathoverflow.net"}, {'qid':29006, 'site':"mathoverflow.net"},
+                                {'qid':38856, 'site':"mathoverflow.net"}, {'qid':7584, 'site':"mathoverflow.net"},
+                                {'qid':117668, 'site':"mathoverflow.net"}, {'qid':8846, 'site':"mathoverflow.net"},
+                                {'qid':178139, 'site':"mathoverflow.net"}, {'qid':42512, 'site':"mathoverflow.net"},
+                                {'qid':4994, 'site':"mathoverflow.net"},
+                                {'qid':733754, 'site':"math.stackexchange.com"}, {'qid':323334, 'site':"math.stackexchange.com"},
+                                {'qid':178940, 'site':"math.stackexchange.com"}, {'qid':111440, 'site':"math.stackexchange.com"},
+                                {'qid':250, 'site':"math.stackexchange.com"}, {'qid':820686, 'site':"math.stackexchange.com"},
+                                {'qid':505367, 'site':"math.stackexchange.com"}, {'qid':362446, 'site':"math.stackexchange.com"},
+                                {'qid':8814, 'site':"math.stackexchange.com"}, {'qid':260656, 'site':"math.stackexchange.com"},
+                                {'qid':2949, 'site':"math.stackexchange.com"},
+                                {'qid':4351, 'site':"matheducators.stackexchange.com"}, {'qid':1817, 'site':"matheducators.stackexchange.com"},
+                              ])
+    question = requests.get('https://api.stackexchange.com/questions/' + str(questionid['qid']) + '?site=' + str(questionid['site']) +
+                            '&filter=!gB66oJbwvcXSH(Ni5Ti9FQ4PaxMw.WKlBWC')
+    question.raise_for_status()
+    question = question.json()['items'][0]
+    ansid = random.choice(question['answers'])['answer_id']
+
+    fullrequest = requests.get('https://api.stackexchange.com/answers/' + str(ansid) + '?site=' + str(questionid['site']) +
+                              '&filter=!Fcb(61J.xH8s_mAfP-LmG*7fPe')
+    fullrequest.raise_for_status()
+    fullrequest = fullrequest.json()
+    answer = fullrequest['items'][0]
+
+    randomse = {'qtitle': question['title'], 'qbody': question['body'], 'qlink': question['link'],
+                'abody': answer['body'], 'alink': answer['link'], 'ascore': answer['score'], 'quota': fullrequest['quota_remaining'] }
+    return randomse
+  except Exception as ex:
+    randomse = {'qtitle': 'Exception occurred', 'qbody': str(ex), 'qlink': 'https://xkcd.com/1084/',
+                'abody': '<img src="https://imgs.xkcd.com/comics/error_code.png"/>', 'alink': 'https://xkcd.com/1024/', 'ascore': '', 'quota': '' }
+    return randomse
+
 def timestamp_for_item(item):
   timestamp = str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
               str(item["ts_hour"]).zfill(2) + ":" + str(item['ts_minute']).zfill(2) + ":" + str(item['ts_second']).zfill(2)
@@ -54,7 +108,7 @@ def render_article(item, breadcrumbs):
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
                          article_raw=rawname, article_src=source, article_author=item['Buc_author'], article_id=item.doc_id, tags=tags,
-                         breadcrumbs=breadcrumbs, article_modded=modified)
+                         breadcrumbs=breadcrumbs, article_modded=modified, viewernotes=get_fortune())
 
 # Endpoint to pull a specific raw file (i.e. no UI) out of the database.
 @app.route('/r/')
@@ -87,17 +141,7 @@ def r_file(ident=None,meat=None,src=None):
 # Index endpoint.
 @app.route('/')
 def index():
-  questionid = random.choice([22299, 1083, 7155, 2144, 14574, 879, 16829, 47214, 44326, 29006, 38856, 7584, 117668, 8846, 178139, 42512, 4994])
-  question = requests.get('https://api.stackexchange.com/questions/'+str(questionid)+'?site=mathoverflow.net&filter=!gB66oJbwvcXSH(Ni5Ti9FQ4PaxMw.WKlBWC').json()['items'][0]
-  ansid = random.choice(question['answers'])['answer_id']
-
-  fullrequest = requests.get('https://api.stackexchange.com/answers/' + str(ansid) + '?site=mathoverflow.net&filter=!Fcb(61J.xH8s_mAfP-LmG*7fPe').json()
-  answer = fullrequest['items'][0]
-
-  randomse = {'qtitle': question['title'], 'qbody': question['body'], 'qlink': question['link'],
-              'abody': answer['body'], 'alink': answer['link'], 'ascore': answer['score'], 'quota': fullrequest['quota_remaining'] }
-
-  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"), randomse=randomse)
+  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"), randomse=get_randomse(), viewernotes=get_fortune())
 
 # If we don't specify a view, we probably want the index.
 @app.route('/v/')
@@ -116,7 +160,7 @@ def v_time(year=None,month=None,day=None,meat=None):
     years = dbops.get_records_by_date()
     for year in years:
       items.append({'loc': url_for('v_time', year=str(year)), 'name': year})
-    return render_template('viewer.html',items=items,view_name='year', breadcrumbs=[{'loc':url_for('v_time'),'name':'By date', 'current':1}])
+    return render_template('viewer.html',items=items,view_name='year', breadcrumbs=[{'loc':url_for('v_time'),'name':'By date', 'current':1}], viewernotes=get_fortune())
 
   if(month == None):
     months = dbops.get_records_by_date(year)
@@ -124,7 +168,7 @@ def v_time(year=None,month=None,day=None,meat=None):
       items.append({'loc': url_for('v_time', year=str(year), month=str(month)),'name':calendar.month_name[int(month)]})
     return render_template('viewer.html',items=items,view_name='month',
                            breadcrumbs=[{'loc':url_for('v_time'), 'name': 'By date'},
-                                        {'loc':url_for('v_time', year=str(year)),'name': year, 'current':1}])
+                                        {'loc':url_for('v_time', year=str(year)),'name': year, 'current':1}], viewernotes=get_fortune())
 
   if(day == None):
     days = dbops.get_records_by_date(year, month)
@@ -133,7 +177,8 @@ def v_time(year=None,month=None,day=None,meat=None):
     return render_template('viewer.html',items=items,view_name='day',
                            breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                         {'loc': url_for('v_time', year=str(year)), 'name': year},
-                                        {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)], 'current':1}])
+                                        {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)], 'current':1}],
+                           viewernotes=get_fortune())
 
   if(meat == None):
     docs = dbops.get_records_by_date(year, month, day)
@@ -144,7 +189,8 @@ def v_time(year=None,month=None,day=None,meat=None):
                            breadcrumbs=[{'loc': url_for('v_time'), 'name': 'By date'},
                                         {'loc': url_for('v_time', year=str(year)), 'name': year},
                                         {'loc': url_for('v_time', year=str(year), month=str(month)), 'name': calendar.month_name[int(month)]},
-                                        {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day)), 'name': str(day), 'current':1}])
+                                        {'loc': url_for('v_time', year=str(year), month=str(month), day=str(day)), 'name': str(day), 'current':1}],
+                           viewernotes=get_fortune())
 
   item = dbops.get_records_by_date(year, month, day, meat)
   if(item == None):
@@ -174,7 +220,8 @@ def v_raw(ident=None):
       return render_article(item, [{'loc': url_for('v_raw'), 'name': 'By ID'},
                                    {'loc': url_for('v_raw', ident=str(ident)), 'name':ident, 'current':1}])
 
-  return render_template("v_raw.html")
+  return render_template("v_raw.html",
+                         viewernotes=get_fortune())
 
 @app.route('/v/tag/')
 @app.route('/v/tag/<path:tags>')
@@ -185,7 +232,8 @@ def v_tag(tags=None, ident=None, meat=None):
     tags = dbops.get_records_by_tag()
     for tag in tags:
       items.append({'loc': url_for('v_tag', tags=tag), 'name': tag})
-    return render_template('viewer.html',items=items, view_name='tag', breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag', 'current':1}])
+    return render_template('viewer.html',items=items, view_name='tag', breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag', 'current':1}],
+                           viewernotes=get_fortune())
 
   tags = tags.split('/')
   nice_tag_list = nice_tag_list = human_readable_tags(tags)
@@ -198,7 +246,7 @@ def v_tag(tags=None, ident=None, meat=None):
     return render_template('viewer.html', items=items, view_name='tag',
                            breadcrumbs=[{'loc':url_for('v_tag'),'name':'By tag'},
                                         {'loc':url_for('v_tag', tags="/".join(tags)), 'name': nice_tag_list, 'current':1}],
-                           viewernotes="<p>Did you know: you can view multiple tags at once by appending them to the URL. For example: <code>/v/tag/tag1/tag2</code>.</p>")
+                           viewernotes=get_fortune())
 
   item = dbops.get_record_by_id(ident)
   if(item == None):
@@ -226,9 +274,9 @@ def v_grep_post():
 @app.route('/v/grep/<q>/<ident>/<meat>')
 def v_grep(q=None,ident=None,meat=None):
   if q == None:
-    return render_template("v_grep.html", searchtype="initial")
+    return render_template("v_grep.html", searchtype="initial", viewernotes=get_fortune())
   if q == '#':
-    return render_template("v_grep.html", searchtype="noquery")
+    return render_template("v_grep.html", searchtype="noquery", viewernotes=get_fortune())
 
   # One of ident and meat was provided but not the other
   if (ident == None) != (meat == None):
@@ -248,7 +296,7 @@ def v_grep(q=None,ident=None,meat=None):
   # So we have a query to search.
   files = search.search_files_for_string(q)
   if(files == []):
-    return render_template("v_grep.html", searchtype="empty", q=q)
+    return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 
   items = []
   for f in files:
@@ -271,8 +319,8 @@ def v_grep(q=None,ident=None,meat=None):
                     'name': menu_name_for_item(item)})
   print(items)
   if (items == []):
-    return render_template("v_grep.html", searchtype="empty", q=q)
+    return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 
   return render_template('viewer.html', items=items, view_name='grep', breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
                                                                                      {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
-                         viewernotes="<p>Did you know: the search functionality doesn't actually work.</p>")
+                                                                       viewernotes=get_fortune())

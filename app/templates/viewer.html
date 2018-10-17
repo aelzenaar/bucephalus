@@ -2,7 +2,6 @@
 {% set page_title = "View by " ~ view_name %}
 {% block content %}
   <h2>The following finer details are available:</h2>
-  {{ viewernotes|safe }}
   <ul class="viewmenu">
     {% for item in items -%}
       <li><a href="{{item.loc}}">{{item.name}}</a></li>
