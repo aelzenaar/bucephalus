@@ -339,10 +339,17 @@ def v_grep(q=None,ident=None,meat=None):
                                                                                      {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
                                                                        viewernotes=get_fortune())
 
+@app.route('/v/coffee')
+def brew_coffee():
+  abort(418)
+
 @app.errorhandler(Exception)
 def handle_error(e):
   if isinstance(e, HTTPException):
-    error = {'code': e.code, 'desc': HTTPStatus(e.code).phrase, 'long': HTTPStatus(e.code).description}
+    if(e.code == 418): # HTTPStatus can't handle HTCPCP errors.
+      error = {'code': e.code, 'desc': "I'm a teapot", 'long': 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot". The resulting entity body MAY be short and stout.'}
+    else:
+      error = {'code': e.code, 'desc': HTTPStatus(e.code).phrase, 'long': HTTPStatus(e.code).description}
     return render_template("error.html", error=error), e.code
   else:
     error = {'code': 500, 'desc': HTTPStatus(500).phrase + " (threw exception)", 'long': HTTPStatus(500).description + ": " + str(e)}
