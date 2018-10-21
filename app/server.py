@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, abort, render_template, make_response, request, escape
 from werkzeug.exceptions import HTTPException
+from werkzeug import unescape
 app = Flask(__name__)
 
 import sys
@@ -19,7 +20,6 @@ import config
 import search
 
 def get_fortune():
-  print("yes")
   did_you_know = ["you can view multiple tags at once by appending them to the URL. For example: <code>/v/tag/tag1/tag2</code>.",
                   "the search functionality doesn't actually work.",
                   "the search functionality allows regular expressions.",
@@ -28,7 +28,9 @@ def get_fortune():
                   "eventually, Bucephalus will have more features.",
                   "Bucephalus is running on Python " + str(sys.version_info[0]) + "." + str(sys.version_info[1]) + ".",
                   "you can update files using the command line after adding them.",
-                  "if your files are lost, you'll wish you had a backup."]
+                  "if your files are lost, you'll wish you had a backup.",
+                  "'Βουκέφαλος' means ox-head.",
+                  "Bucephalus was named after a mark on his body depicting the head of an ox."]
 
   return "Did you know: " + random.choice(did_you_know)
 
@@ -64,7 +66,7 @@ def get_randomse():
     fullrequest = fullrequest.json()
     answer = fullrequest['items'][0]
 
-    randomse = {'qtitle': question['title'], 'qbody': question['body'], 'qlink': question['link'],
+    randomse = {'qtitle': unescape(question['title']), 'qbody': question['body'], 'qlink': question['link'],
                 'abody': answer['body'], 'alink': answer['link'], 'ascore': answer['score'], 'quota': fullrequest['quota_remaining'] }
     return randomse
   except Exception as ex:
@@ -133,7 +135,6 @@ def r_file(ident=None,meat=None,src=None):
   resp = make_response(data)
   # Fudge the mimetypes
   mime = magic.Magic(mime=True).from_file(str(filename))
-  print(mime)
   if ("text/" in mime) & (not("html" in mime)):
     resp.headers['Content-Type'] = 'text/plain'
   else:
@@ -215,7 +216,6 @@ def v_time(year=None,month=None,day=None,meat=None):
 # Endpoint to handle search-by-ID. Redirects back to the main endpoint.
 @app.route('/v/raw/post', methods=['POST'])
 def v_raw_post():
-  print(url_for('v_raw', ident = request.form['ident']))
   return redirect(url_for('v_raw', ident = request.form['ident']))
 
 # Main endpoint for search-by-ID
@@ -280,7 +280,8 @@ def v_grep_post():
   if(request.form['q'] == ''):
     return redirect(url_for('v_grep', q = '#'))
 
-  return redirect(url_for('v_grep', q = request.form['q']))
+  print(request.form.get('checkCase', '1'))
+  return redirect(url_for('v_grep', q = request.form['q'], c=request.form.get('checkCase', '1')))
 
 # Main endpoint for search-by-ID
 @app.route('/v/grep/')
@@ -308,17 +309,17 @@ def v_grep(q=None,ident=None,meat=None):
                                 {'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
 
   # So we have a query to search.
-  files = search.search_files_for_string(q)
+  print(request.args.get("c", '0'))
+  case = False if request.args.get("c", '1') == '0' else True
+  files = search.search_files_for_string(q, case)
   if(files == []):
     return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 
   items = []
   for f in files:
     parts = f.relative_to(config.get_user_data_dir()).parts
-    print(parts)
     if len(parts) < 4:
       continue
-    print("go")
     year = parts[0]
     month = parts[1]
     day = parts[2]
@@ -326,12 +327,10 @@ def v_grep(q=None,ident=None,meat=None):
       meat = parts[4]
     else:
       meat = parts[3]
-    print(meat)
     item = dbops.get_record_by_file(year, month, day, meat)
     if not(item == None):
       items.append({'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']),
                     'name': menu_name_for_item(item)})
-  print(items)
   if (items == []):
     return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 

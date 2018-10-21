@@ -5,6 +5,7 @@
   <form method="post" action="{{url_for('v_grep_post')}}">
     Query (accepts regex's): <input type="text" name="q"/>
     <input type="submit" value="Search">
+    <input type="checkbox" name="checkCase" value="1" checked> <label for="checkCase">Case sensitive</label>
   </form>
   {% if searchtype == "empty" %}
   <div class="error">Query returned no results: {{q}}</div>
