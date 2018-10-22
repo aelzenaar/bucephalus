@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, abort, render_template, make_response, request, escape
 from werkzeug.exceptions import HTTPException
+from werkzeug.routing import RequestRedirect
 from werkzeug import unescape
 app = Flask(__name__)
 
@@ -344,7 +345,12 @@ def brew_coffee():
 
 @app.errorhandler(Exception)
 def handle_error(e):
+  if isinstance(e, RequestRedirect):
+    return e
   if isinstance(e, HTTPException):
+    print("Got: "+str(e.code))
+    if(e.code == 301):
+      redirect(e.location)
     if(e.code == 418): # HTTPStatus can't handle HTCPCP errors.
       error = {'code': e.code, 'desc': "I'm a teapot", 'long': 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot". The resulting entity body MAY be short and stout.'}
     else:
