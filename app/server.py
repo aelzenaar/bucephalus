@@ -9,8 +9,6 @@ import sys
 import requests
 from http import HTTPStatus
 
-from pathlib import Path
-
 import calendar
 import magic
 from datetime import datetime
