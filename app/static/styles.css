@@ -9,3 +9,5 @@ main { margin: auto; width: 70% }
 header h1 { margin: 0; padding: 0; margin-bottom: 0.2em }
 header .breadcrumb { border=1px solid; background-color:white; padding:0.2em }
 header .prevnext { border=1px solid; background-color:#b3ffcc; padding:0.2em }
+
+#fileInfo th {text-align:right}
