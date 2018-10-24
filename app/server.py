@@ -272,6 +272,17 @@ def v_tag(tags=None, ident=None, meat=None):
                                {'loc': url_for('v_tag', tags="/".join(tags), ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
   return abort(501)
 
+@app.route('/v/recent/')
+def v_recent():
+  items = []
+  docs = dbops.get_recents()
+  for doc in docs:
+    items.append({'loc': url_for('v_time', year=doc['ts_year'], month=doc['ts_month'],day=doc['ts_day'],meat=doc['Buc_name']), 'name': menu_name_for_item(doc)})
+  return render_template('viewer.html',items=items, view_name='recent', breadcrumbs=[{'loc':url_for('v_recent'),'name':'By recent', 'current':1}],
+                          viewernotes=get_fortune())
+
+  return abort(501)
+
 # Endpoint to handle search-by-content. Redirects back to the main endpoint.
 @app.route('/v/grep/post', methods=['POST'])
 def v_grep_post():
@@ -341,7 +352,7 @@ def v_grep(q=None,ident=None,meat=None):
 def brew_coffee():
   abort(418)
 
-@app.errorhandler(Exception)
+#@app.errorhandler(Exception)
 def handle_error(e):
   if isinstance(e, RequestRedirect):
     return e

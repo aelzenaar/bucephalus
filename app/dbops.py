@@ -13,15 +13,52 @@ import config
 directory=config.get_user_data_dir()
 dbname="database.db"
 
+def get_recents():
+  filename = Path(directory)/"recent.json"
+  decoder = json.JSONDecoder()
+  if not filename.exists():
+    return []
+
+  with open(filename) as f:
+    ids = decoder.decode(f.read())
+
+  print(ids)
+  recents = []
+  for i in ids:
+    recents.append(get_record_by_id(i))
+  return recents
+
+def set_recent(recents):
+  filename = Path(directory)/"recent.json"
+  if not filename.exists():
+    filename.touch()
+  encoder = json.JSONEncoder()
+  with open(filename, 'w') as f:
+    f.write(encoder.encode(recents))
+
+def add_recent(dbid):
+  print("####### dbid " + str(dbid))
+  recent = get_recents()
+  if dbid in recent:
+    recent.pop(recent.index(dbid))
+  elif len(recent) == 5:
+    recent.pop(0)
+
+  recent.append(dbid)
+  set_recent(recent)
+
 # Write the given metadata into the database, overwriting old records.
 def write_metadata(metadata):
   db = TinyDB(Path(directory)/dbname)
   metatable = db.table('files')
   oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
   if(oldrecord == None):
-    metatable.insert(metadata)
+    dbid = metatable.insert(metadata)
   else:
+    dbid = oldrecord.doc_id
     metatable.update(metadata, doc_ids=[oldrecord.doc_id])
+
+  add_recent(dbid)
 
 
 # Copy a file into the database, based on the given metadata; check for overwriting if overwrite == true.

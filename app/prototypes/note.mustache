@@ -30,6 +30,11 @@
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily\linespread{0.8}\small}
 
+\usepackage{pgf,tikz,pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+
 \renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
 
@@ -41,6 +46,7 @@
 \renewcommand{\C}{\mathbb{C}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\A}{\mathcal{A}}
 \newcommand{\from}{\leftarrow}
 
 \DeclareMathOperator{\cl}{cl}
@@ -93,6 +99,6 @@
 \cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
 
 \begin{document}
-\section*{ {{{Buc_title}}} }
+\Large{\textbf{ {{{Buc_title}}} }}
 {{{content}}}
 \end{document}
