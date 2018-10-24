@@ -29,7 +29,12 @@ def get_fortune():
                   "you can update files using the command line after adding them.",
                   "if your files are lost, you'll wish you had a backup.",
                   "'Βουκέφαλος' means ox-head.",
-                  "Bucephalus was named after a mark on his body depicting the head of an ox."]
+                  "Bucephalus was named after a mark on his body depicting the head of an ox.",
+                  "the pigeonhole principle will probably solve your problem.",
+                  "$3987^{12} + 4365^{12} = 4472^{12}$",
+                  "oops.",
+                  "in science one tries to tell people, in such a way as to be understood by everyone, something that no one ever knew before. But in poetry, it's the exact opposite. (PAM Dirac)"
+                  ]
 
   return "Did you know: " + random.choice(did_you_know)
 
@@ -354,7 +359,7 @@ def v_grep(q=None,ident=None,meat=None):
 def brew_coffee():
   abort(418)
 
-#@app.errorhandler(Exception)
+@app.errorhandler(Exception)
 def handle_error(e):
   if isinstance(e, RequestRedirect):
     return e
