@@ -275,9 +275,11 @@ def v_tag(tags=None, ident=None, meat=None):
 @app.route('/v/recent/')
 def v_recent():
   items = []
-  docs = dbops.get_recents()
-  for doc in docs:
+  ids = dbops.get_recents()
+  for i in ids:
+    doc = dbops.get_record_by_id(i)
     items.append({'loc': url_for('v_time', year=doc['ts_year'], month=doc['ts_month'],day=doc['ts_day'],meat=doc['Buc_name']), 'name': menu_name_for_item(doc)})
+
   return render_template('viewer.html',items=items, view_name='recent', breadcrumbs=[{'loc':url_for('v_recent'),'name':'By recent', 'current':1}],
                           viewernotes=get_fortune())
 

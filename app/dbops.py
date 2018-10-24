@@ -22,11 +22,7 @@ def get_recents():
   with open(filename) as f:
     ids = decoder.decode(f.read())
 
-  print(ids)
-  recents = []
-  for i in ids:
-    recents.append(get_record_by_id(i))
-  return recents
+  return ids
 
 def set_recent(recents):
   filename = Path(directory)/"recent.json"
