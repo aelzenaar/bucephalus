@@ -22,6 +22,8 @@ def get_fortune():
   now = datetime.now()
   if(now.month == 3 and now.day == 14):
     return "<a href=\"https://www.youtube.com/watch?v=FtxmFlMLYRI\">happy $\pi$ day</a>."
+  if(now.month == 4 and now.day == 26):
+    return "<a href=\"https://www.youtube.com/watch?v=PWZYId1fWnM\">it's April 26</a>."
   did_you_know = ["you can view multiple tags at once by appending them to the URL. For example: <code>/v/tag/tag1/tag2</code>.",
                   "the search functionality doesn't actually work.",
                   "the search functionality allows regular expressions.",
