@@ -12,6 +12,7 @@ made in the past, it's quick and functional and the text is in a serif font.
   <li><a href="/v/raw">Behold by ID.</a></li>
 </ul>
 
+{% if randomse is not none %}
 <h2>Random thing from StackExchange</h2>
 <h3>{{ randomse.qtitle }}</h3>
 {{randomse.qbody|safe}}
@@ -21,6 +22,7 @@ made in the past, it's quick and functional and the text is in a serif font.
 
 <p>Links: <a href="{{ randomse.qlink }}">question</a>&nbsp;<a href="{{randomse.alink}}">answer</a>
 <p>API quota remaining: {{randomse.quota}}
+{% endif %}
 
 {% endblock %}
 {% block footer %}

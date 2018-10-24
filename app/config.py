@@ -5,3 +5,6 @@ def get_user_data_dir():
 
 def get_install_dir():
   return Path(__file__).parent
+
+def enable_long_fortunes():
+  return True

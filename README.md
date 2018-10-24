@@ -48,6 +48,26 @@ that needs to be passed to `dbops.add_file` which is passed by `add_record` as f
 have a vacuumed TeX file to update) or `bucfup` (if you are adding a real file of some sort) to overwrite files and set the modification date. Adding files of
 the same name on different days adds new files, as before.
 
+## Configuration
+Some configuration settings can be found in [config.py](app/config.py); for example, you can disable the random StackExchange q+a feature
+by changing `config.enable_long_fortunes()` to return `False`.
+
+If the file `defaults.json` exists in the top level of your user data directory, then the JSON tags inside it will be added to the metadata
+available to `bucvac` and `bucadd`. For example, if you save the following example as your defaults file, then the author field will be automatically
+set to Aeneas when vacuuming up a TeX file or using `bucadd` on any other file.
+
+```javascript
+{'Buc_author':'Aeneas', 'random_data_field':'this is data'}
+```
+
+When using `bucvac`, every field you add will be available inside both templates and the TeX files themselves: you can access the `random_data_field` from
+the above example using the `{{template.random_data_field}}`` template command.
+
+Note: `bucadd` will only read `Buc_author` and `Buc_tags` from the defaults file. It will append the tags specified in defaults to those on
+the command line. If an author is specified to `bucadd` on the command line, it will take priority over that in the defaults. When using
+`bucvac`, the fields inside the TeX file will overwrite those in defaults if there is a conflict.
+
+
 ## Plan.
 [Project board](https://github.com/aelzenaar/bucephalus/projects/1)
 
