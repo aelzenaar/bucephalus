@@ -22,5 +22,6 @@
     {%if article_src is not none%}<th>Source:</th><td><a href="{{article_src}}">Download</a></td>{% endif %}</tr>
   </tbody>
 </table>
-<div><iframe src="{{article_raw}}" style="width:70vw; height: 80vh"></iframe></div>
+<button onclick="document.getElementById('viewerWindow').src = document.getElementById('viewerWindow').src">Refresh</button>
+<div><iframe id="viewerWindow" src="{{article_raw}}" style="width:70vw; height: 80vh"></iframe></div>
 {% endblock %}
