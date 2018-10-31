@@ -17,6 +17,7 @@ import random
 import dbops
 import config
 import search
+import tasklist
 
 def get_fortune():
   now = datetime.now()
@@ -47,7 +48,6 @@ def get_randomse():
   if not config.enable_long_fortunes():
     return None
   try:
-    #raise "WOW ERROR OOPS"
     questionid = random.choice([{'qid':22299, 'site':"mathoverflow.net"}, {'qid':1083, 'site':"mathoverflow.net"},
                                 {'qid':7155, 'site':"mathoverflow.net"}, {'qid':2144, 'site':"mathoverflow.net"},
                                 {'qid':14574, 'site':"mathoverflow.net"}, {'qid':879, 'site':"mathoverflow.net"},
@@ -300,11 +300,9 @@ def v_recent():
 # Endpoint to handle search-by-content. Redirects back to the main endpoint.
 @app.route('/v/grep/post', methods=['POST'])
 def v_grep_post():
-  print(url_for('v_grep', q = request.form['q']))
   if(request.form['q'] == ''):
     return redirect(url_for('v_grep', q = '#'))
 
-  print(request.form.get('checkCase', '1'))
   return redirect(url_for('v_grep', q = request.form['q'], c=request.form.get('checkCase', '1')))
 
 # Main endpoint for search-by-ID
@@ -333,7 +331,6 @@ def v_grep(q=None,ident=None,meat=None):
                                 {'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
 
   # So we have a query to search.
-  print(request.args.get("c", '0'))
   case = False if request.args.get("c", '1') == '0' else True
   files = search.search_files_for_string(q, case)
   if(files == []):
@@ -362,16 +359,28 @@ def v_grep(q=None,ident=None,meat=None):
                                                                                      {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
                                                                        viewernotes=get_fortune())
 
+@app.route('/v/tasks', methods=['POST', 'GET'])
+def v_tasks():
+  if(request.method == 'POST'):
+    print("in post")
+    if 'add' in request.form:
+      tasklist.add(request.form['toadd'])
+    elif 'todelete' in request.form:
+      print(request.form.getlist('delete'))
+      tasklist.rm(request.form.getlist('delete'))
+
+  return render_template('tasklist.html', tasks=tasklist.tasks(), breadcrumbs = [{'loc': url_for('v_tasks'),'name':'Task list','current':1}],
+                         viewernotes=get_fortune())
+
 @app.route('/v/coffee')
 def brew_coffee():
   abort(418)
 
-@app.errorhandler(Exception)
+#@app.errorhandler(Exception)
 def handle_error(e):
   if isinstance(e, RequestRedirect):
     return e
   if isinstance(e, HTTPException):
-    print("Got: "+str(e.code))
     if(e.code == 301):
       redirect(e.location)
     if(e.code == 418): # HTTPStatus can't handle HTCPCP errors.

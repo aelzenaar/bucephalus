@@ -33,7 +33,6 @@ def set_recent(recents):
     f.write(encoder.encode(recents))
 
 def add_recent(dbid):
-  print("####### dbid " + str(dbid))
   recent = get_recents()
   if dbid in recent:
     recent.pop(recent.index(dbid))

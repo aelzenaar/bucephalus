@@ -1,0 +1,12 @@
+{%extends "base.html" %}
+{% set page_title = "Task list" %}
+{% block content %}
+  <h2>Task list</h2>
+  <form method="post" action="{{url_for('v_tasks')}}">
+    {% for task in tasks %}
+    <input type="checkbox" name="delete" value="{{loop.index0}}"><label for="delete">{{task}}</label><br/>
+    {% endfor %}
+    <input type="text" name="toadd"/><button type="submit" name="add">Add task</button>
+    <button type="submit" name="todelete">Remove selected</button>
+  </form>
+{% endblock %}
