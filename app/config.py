@@ -8,3 +8,6 @@ def get_install_dir():
 
 def enable_long_fortunes():
   return True
+
+def enable_tasklist_web():
+  return True

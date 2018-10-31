@@ -48,6 +48,11 @@ that needs to be passed to `dbops.add_file` which is passed by `add_record` as f
 have a vacuumed TeX file to update) or `bucfup` (if you are adding a real file of some sort) to overwrite files and set the modification date. Adding files of
 the same name on different days adds new files, as before.
 
+### Web-only functionality
+The todo list is currently online only and is read-write by everyone - i.e. there is *NO AUTHENTICATION WHATSOEVER*!!! (When I add additional features,
+e.g. integration with services and/or editors, I will implement some form of auth. Otherwise, do not leave the todo functionality running when on a public
+server - it can be disabled by changing `enable_tasklist_web()` to return `False` in `config.py`.)
+
 ## Configuration
 Some configuration settings can be found in [config.py](app/config.py); for example, you can disable the random StackExchange q+a feature
 by changing `config.enable_long_fortunes()` to return `False`.

@@ -12,6 +12,7 @@ cp app/config.py $INSTALLDIR
 cp app/search.py $INSTALLDIR
 cp app/bucvac.py $INSTALLDIR
 cp app/bucfup.py $INSTALLDIR
+cp app/tasklist.py $INSTALLDIR
 cp -R app/static $INSTALLDIR
 cp -R app/templates $INSTALLDIR
 cp -R app/prototypes $INSTALLDIR

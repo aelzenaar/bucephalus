@@ -4,9 +4,9 @@
   <h2>Task list</h2>
   <form method="post" action="{{url_for('v_tasks')}}">
     {% for task in tasks %}
-    <input type="checkbox" name="delete" value="{{loop.index0}}"><label for="delete">{{task}}</label><br/>
+    <input type="checkbox" name="delete" value="{{loop.index0}}" id="{{loop.index0}}"><label for="{{loop.index0}}">{{task}}</label><br/>
     {% endfor %}
-    <input type="text" name="toadd"/><button type="submit" name="add">Add task</button>
-    <button type="submit" name="todelete">Remove selected</button>
+
+    <p><input type="text" name="toadd" id="addbutton"/> <button type="submit" name="add" for="addbutton">Add task</button> or <button type="submit" name="todelete">Remove selected</button>
   </form>
 {% endblock %}
