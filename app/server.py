@@ -361,7 +361,7 @@ def v_grep(q=None,ident=None,meat=None):
 
 @app.route('/v/tasks', methods=['POST', 'GET'])
 def v_tasks():
-  if(not config.enable_tasklist_web()):
+  if not config.enable_tasklist_web():
     return abort(401)
 
   if(request.method == 'POST'):

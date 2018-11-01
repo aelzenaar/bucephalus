@@ -33,7 +33,8 @@ After installation, at the time of writing the following commands will be availa
 
 * `bucserve` - start the web server.
 * `bucadd [-h] [-a AUTHOR] FILENAME TITLE TAGS [TAGS ...]` (must have at least one tag, author optional) - add the given file to the bucephalus database.
-* `bucfup [-h] FILENAME IDENT` - update the existing file with id IDENT using FILENAME.
+* `bucfup [-h] FILENAME IDENT` - update the existing file contents at id IDENT from FILENAME.
+* `bucmup [-h] [-t TITLE] [-a AUTHOR] [-T TAGS [TAGS ...]] IDENT` - update the existing file metadata at id IDENT with the given metadata, or just display the current metadata if no optional arguments are given.
 * `bucrm <identifier>` - remove the given database entry permanently and all the files associated with it. The identifier could be reused, I don't know.
 * `bucvac [-h] [-o OUTPUTFILE] [-u UPDATEIDENT] FILENAME` - vacuum up the given TeX source file which includes a section of JSON at the start, run it through the appropriate template (templates are installed in `/opt/bucephalus/prototypes`, and bucvac will also look in `~/bucephalus/prototypes`; the template chosen is given by the `Buc_hp` JSON key), and add it to the server after running XeLaTeX on it twice. The filename on the server will be outputname.pdf. Only overwrites files if -u is given a valid ID.
 
@@ -66,7 +67,7 @@ set to Aeneas when vacuuming up a TeX file or using `bucadd` on any other file.
 ```
 
 When using `bucvac`, every field you add will be available inside both templates and the TeX files themselves: you can access the `random_data_field` from
-the above example using the `{{template.random_data_field}}`` template command.
+the above example using the `{{template.random_data_field}}` template command.
 
 Note: `bucadd` will only read `Buc_author` and `Buc_tags` from the defaults file. It will append the tags specified in defaults to those on
 the command line. If an author is specified to `bucadd` on the command line, it will take priority over that in the defaults. When using

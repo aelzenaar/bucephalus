@@ -44,6 +44,14 @@ def add_recent(dbid):
 
 # Write the given metadata into the database, overwriting old records.
 def write_metadata(metadata):
+  date = datetime.datetime.today()
+  metadata['ts_year2'] = date.year
+  metadata['ts_month2'] = date.month
+  metadata['ts_day2'] = date.day
+  metadata['ts_hour2'] = date.hour
+  metadata['ts_minute2'] = date.minute
+  metadata['ts_second2'] = date.second
+
   db = TinyDB(Path(directory)/dbname)
   metatable = db.table('files')
   oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
@@ -100,14 +108,6 @@ def update_record(ident, meat, source=None):
     return False
   if(oldrecord['Buc_name'] != Path(meat).name):
     print("*** Error: updating file with wrong name.")
-
-  date = datetime.datetime.today()
-  oldrecord['ts_year2'] = date.year
-  oldrecord['ts_month2'] = date.month
-  oldrecord['ts_day2'] = date.day
-  oldrecord['ts_hour2'] = date.hour
-  oldrecord['ts_minute2'] = date.minute
-  oldrecord['ts_second2'] = date.second
 
   add_file(oldrecord, True, meat, source)
   write_metadata(oldrecord)
