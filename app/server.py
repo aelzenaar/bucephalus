@@ -303,7 +303,7 @@ def v_grep_post():
   if(request.form['q'] == ''):
     return redirect(url_for('v_grep', q = '#'))
 
-  return redirect(url_for('v_grep', q = request.form['q'], c=request.form.get('checkCase', '1')))
+  return redirect(url_for('v_grep', q = request.form['q'], c=request.form.get('checkCase', '0')))
 
 # Main endpoint for search-by-ID
 @app.route('/v/grep/')
