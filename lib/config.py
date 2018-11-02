@@ -4,7 +4,7 @@ def get_user_data_dir():
   return Path.home()/"bucephalus"
 
 def get_install_dir():
-  return Path(__file__).parent
+  return Path(__file__).parent.parent
 
 def enable_long_fortunes():
   return True
