@@ -54,6 +54,9 @@ The todo list is currently online only and is read-write by everyone - i.e. ther
 e.g. integration with services and/or editors, I will implement some form of auth. Otherwise, do not leave the todo functionality running when on a public
 server - it can be disabled by changing `enable_tasklist_web()` to return `False` in `config.py`.)
 
+The web service also embeds [Geogebra](https://geogebra.org/); if an article with name ending in `.ggb` is requested, the endpoint `/r/ggb/<IDENT>/<FILENAME>` is
+transparently embedded into the article viewer and the source link allows download of the ggb file. (This feature can be disabled in `config.py`.)
+
 ## Configuration
 Some configuration settings can be found in [config.py](app/config.py); for example, you can disable the random StackExchange q+a feature
 by changing `config.enable_long_fortunes()` to return `False`.
