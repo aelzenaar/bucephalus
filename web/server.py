@@ -113,17 +113,32 @@ def human_readable_tags(tags):
 
 # Render a specific article from its database entry, given the set of breadcrumbs you want to display.
 def render_article(item, breadcrumbs):
-  rawname = "/r/" + str(item.doc_id) + "/" + item['Buc_name']
+  if (config.enable_ggb_integration()) and (item['Buc_name'][-4:] == '.ggb'):
+    rawname = url_for('r_ggb', ident=str(item.doc_id), meat=item['Buc_name'])
+    source = url_for('r_file', ident=str(item.doc_id), meat=item['Buc_name'])
+    print(rawname)
+  else:
+    rawname = url_for('r_file', ident=str(item.doc_id), meat=item['Buc_name'])
+    source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   tags = []
   for tag in item['Buc_tags']:
     tags.append({'name': str(escape(tag)).replace(' ', '&nbsp;'), 'loc': "/v/tag/" + tag})
   timestamp, modified = timestamp_for_item(item)
-  source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
 
   return render_template('article.html', article_name=item['Buc_name'], article_timestamp=timestamp, article_title=item['Buc_title'],
                          article_raw=rawname, article_src=source, article_author=item['Buc_author'], article_id=item.doc_id, tags=tags,
                          breadcrumbs=breadcrumbs, article_modded=modified, viewernotes=get_fortune())
+
+@app.route('/r/ggb/<ident>/<meat>')
+def r_ggb(ident=None,meat=None):
+  if (ident == None) | (meat == None):
+    return redirect(url_for('index'))
+
+  if not(meat[-4:] == '.ggb'):
+    return abort(415)
+
+  return render_template("ggbframe.html", ggbfilename=url_for('r_file', ident=ident, meat=meat))
 
 # Endpoint to pull a specific raw file (i.e. no UI) out of the database.
 @app.route('/r/')

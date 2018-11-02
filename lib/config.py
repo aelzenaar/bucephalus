@@ -11,3 +11,6 @@ def enable_long_fortunes():
 
 def enable_tasklist_web():
   return True
+
+def enable_ggb_integration():
+  return True
