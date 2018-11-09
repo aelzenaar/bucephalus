@@ -86,12 +86,13 @@ def get_randomse():
     return randomse
 
 def timestamp_for_item(item):
-  timestamp = str(item['ts_year']) + str('/') + str(item['ts_month']) + str('/') + str(item['ts_day']) + ' @ ' +\
-              str(item["ts_hour"]).zfill(2) + ":" + str(item['ts_minute']).zfill(2) + ":" + str(item['ts_second']).zfill(2)
+  f = lambda y, m, d, h, n, s: str(y) + str('/') + str(m).zfill(2) + str('/') + str(d).zfill(2) + ' @ ' +\
+                          str(h).zfill(2) + ":" + str(n).zfill(2) + ":" + str(s).zfill(2)
+
+  timestamp = f(item['ts_year'], item['ts_month'], item['ts_day'], item["ts_hour"], item['ts_minute'], item['ts_second'])
 
   if('ts_year2' in item):
-    modified  = str(item['ts_year2']) + str('/') + str(item['ts_month2']) + str('/') + str(item['ts_day2']) + ' @ ' +\
-                str(item["ts_hour2"]).zfill(2) + ":" + str(item['ts_minute2']).zfill(2) + ":" + str(item['ts_second2']).zfill(2)
+    modified  = f(item['ts_year2'], item['ts_month2'], item['ts_day2'], item["ts_hour2"], item['ts_minute2'], item['ts_second2'])
   else:
     modified = timestamp
 
