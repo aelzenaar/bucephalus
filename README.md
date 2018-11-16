@@ -32,6 +32,8 @@ need to when something goes wrong.
 After installation, at the time of writing the following commands will be available:
 
 * `bucserve` - start the web server.
+* `buctask [-h] [-a DESCRIPTION | -r NUMBER [NUMBER ...]]` - manage the task list from the command line. If no options given, display the list; otherwise
+add the given task string to the end, or remove the given items from the list.
 * `bucadd [-h] [-a AUTHOR] FILENAME TITLE TAGS [TAGS ...]` (must have at least one tag, author optional) - add the given file to the bucephalus database.
 * `bucfup [-h] FILENAME IDENT` - update the existing file contents at id IDENT from FILENAME.
 * `bucmup [-h] [-t TITLE] [-a AUTHOR] [-T TAGS [TAGS ...]] IDENT` - update the existing file metadata at id IDENT with the given metadata, or just display the current metadata if no optional arguments are given.
