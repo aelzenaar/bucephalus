@@ -23,7 +23,7 @@ args = vars(parser.parse_args())
 author = args['a'][0] if args['a'] != None else ""
 tags = []
 
-defaults=config.get_user_data_dir()/"defaults.json"
+defaults=config.get_defaults_file_path()
 if defaults.exists():
   with open(defaults) as f:
     decoder = json.JSONDecoder()

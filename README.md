@@ -82,6 +82,8 @@ set to Aeneas when vacuuming up a TeX file or using `bucadd` on any other file.
 When using `bucvac`, every field you add will be available inside both templates and the TeX files themselves: you can access the `random_data_field` from
 the above example using the `{{template.random_data_field}}` template command.
 
+**New feature**: the `bucdef` command can be used to modify `defaults.json` from the command line.
+
 Note: `bucadd` will only read `Buc_author` and `Buc_tags` from the defaults file. It will append the tags specified in defaults to those on
 the command line. If an author is specified to `bucadd` on the command line, it will take priority over that in the defaults. When using
 `bucvac`, the fields inside the TeX file will overwrite those in defaults if there is a conflict.
