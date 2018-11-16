@@ -9,6 +9,7 @@ from pathlib import Path
 from tinydb import TinyDB, Query, where
 
 import config
+import vcs
 
 directory=config.get_user_data_dir()
 dbname="database.db"
@@ -111,6 +112,7 @@ def update_record(ident, meat, source=None):
 
   add_file(oldrecord, True, meat, source)
   write_metadata(oldrecord)
+  vcs.commit("dbops: update record")
   return True
 
 # Create a new record, try not to overwrite existing stuff.
@@ -143,6 +145,7 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
   add_file(metadata, False, meatpath, srcpath)
   write_metadata(metadata)
 
+  vcs.commit("dbops: add new record")
   return metadata
 
 # If tags==None, return list of all tags; otherwise return intersection of given tags.
@@ -245,6 +248,7 @@ def remove_record_by_id(ident):
     sourcepath.unlink()
 
   print("*** Deleted.")
+  vcs.commit("dbops: delete record")
   return True
 
 # Get record based on date and filename.

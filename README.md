@@ -60,8 +60,14 @@ server - it can be disabled entirely by changing `enable_tasklist_web()` to retu
 The web service also embeds [Geogebra](https://geogebra.org/); if an article with name ending in `.ggb` is requested, the endpoint `/r/ggb/<IDENT>/<FILENAME>` is
 transparently embedded into the article viewer and the source link allows download of the ggb file. (This feature can be disabled in `config.py`.)
 
+### Git (or other VCS) integration
+Bucephalus will now by default store its database in a git repository. No functionality is actually provided at this point beyond simply
+commiting whenever a file is added or removed, or the task list changes. The functionality can be disabled by changing `enable_vcs_commits()`
+to return `False` in `config.py`; all the VCS functionality is kept inside [vcs.py](lib/vcs.py), and so it should be relatively easy to
+swap Git out for hg and/or svn and/or sccs (if you are still living that far in the past).
+
 ## Configuration
-Some configuration settings can be found in [config.py](app/config.py); for example, you can disable the random StackExchange q+a feature
+Some configuration settings can be found in [config.py](lib/config.py); for example, you can disable the random StackExchange q+a feature
 by changing `config.enable_long_fortunes()` to return `False`.
 
 If the file `defaults.json` exists in the top level of your user data directory, then the JSON tags inside it will be added to the metadata

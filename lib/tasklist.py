@@ -5,6 +5,7 @@ from pathlib import Path
 from tinydb import TinyDB, Query, where
 
 import config
+import vcs
 
 directory=config.get_user_data_dir()
 
@@ -19,13 +20,13 @@ def tasks():
 
 
 def add(task):
-  print("*** add" + task)
+  #print("*** add task: " + task)
   filename = Path(directory)/"tasks.json"
   encoder = json.JSONEncoder()
   tasklist = tasks() + [task] # Need to read before we open for writing.
-  print(tasklist)
   with open(filename, 'w') as f:
     f.write(encoder.encode(tasklist))
+  vcs.commit("Tasklist: add task")
 
 def rm(taskids):
   filename = Path(directory)/"tasks.json"
@@ -36,3 +37,4 @@ def rm(taskids):
     tasklist.pop(i)
   with open(filename, 'w') as f:
     f.write(encoder.encode(tasklist))
+  vcs.commit("Tasklist: rm task")

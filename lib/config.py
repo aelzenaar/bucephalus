@@ -26,3 +26,7 @@ def enable_tasklist_web_write():
 # Enable Geogebra integration on the web
 def enable_ggb_integration():
   return True
+
+# Enable VCS commits on all database changes
+def enable_vcs_commits():
+  return True
