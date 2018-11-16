@@ -17,7 +17,7 @@ import sys
 directory1=config.get_user_data_dir()/"prototypes"
 directory2=config.get_install_dir()/"prototypes"
 
-defaults=config.get_user_data_dir()/"defaults.json"
+defaults=config.get_defaults_file_path()
 
 def vacuum(filename,output=None,update=None):
   try:

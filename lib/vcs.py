@@ -12,5 +12,5 @@ def commit(mesg):
     commit(mesg)
     return
 
-  subprocess.call(['git', '-C', str(path), 'add', '--quiet', str(path)])
+  subprocess.call(['git', '-C', str(path), 'add', str(path)])
   subprocess.call(['git', '-C', str(path), 'commit', '--quiet', '-m', 'Bucephalus: ' + mesg, '--author=Bucephalus Automated <bucep5@localhost>'])

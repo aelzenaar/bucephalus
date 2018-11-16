@@ -26,3 +26,4 @@ wrapperscript bucfup
 wrapperscript bucmup
 wrapperscript bucrm
 wrapperscript buctask
+wrapperscript bucdef

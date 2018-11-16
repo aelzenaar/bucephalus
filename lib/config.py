@@ -8,6 +8,9 @@ def get_user_data_dir():
 def get_install_dir():
   return Path(__file__).parent.parent
 
+def get_defaults_file_path():
+  return get_user_data_dir()/"defaults.json"
+
 # Enable the long-form random content on the homepage.
 def enable_long_fortunes():
   return True
