@@ -52,7 +52,8 @@ the same name on different days adds new files, as before.
 ### Web-only functionality
 The todo list is currently online only and is read-write by everyone - i.e. there is *NO AUTHENTICATION WHATSOEVER*!!! (When I add additional features,
 e.g. integration with services and/or editors, I will implement some form of auth. Otherwise, do not leave the todo functionality running when on a public
-server - it can be disabled by changing `enable_tasklist_web()` to return `False` in `config.py`.)
+server - it can be disabled entirely by changing `enable_tasklist_web()` to return `False` in `config.py`, or can be made read-only by changing
+`enable_tasklist_web_write()` to return `False` in the same file.)
 
 The web service also embeds [Geogebra](https://geogebra.org/); if an article with name ending in `.ggb` is requested, the endpoint `/r/ggb/<IDENT>/<FILENAME>` is
 transparently embedded into the article viewer and the source link allows download of the ggb file. (This feature can be disabled in `config.py`.)

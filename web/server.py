@@ -378,9 +378,11 @@ def v_grep(q=None,ident=None,meat=None):
 @app.route('/v/tasks', methods=['POST', 'GET'])
 def v_tasks():
   if not config.enable_tasklist_web():
-    return abort(401)
+    return abort(403)
 
   if(request.method == 'POST'):
+    if not config.enable_tasklist_web_write():
+      return abort(405)
     print("in post")
     if 'add' in request.form:
       tasklist.add(request.form['toadd'])
@@ -389,7 +391,7 @@ def v_tasks():
       tasklist.rm(request.form.getlist('delete'))
 
   return render_template('tasklist.html', tasks=tasklist.tasks(), breadcrumbs = [{'loc': url_for('v_tasks'),'name':'Task list','current':1}],
-                         viewernotes=get_fortune())
+                         viewernotes=get_fortune(), writeable=config.enable_tasklist_web_write())
 
 @app.route('/v/coffee')
 def brew_coffee():
