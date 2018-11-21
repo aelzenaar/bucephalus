@@ -33,7 +33,7 @@ else:
     print(": " + str(key) + "\t\t" + str(val))
 
 if need_write:
-  encoder = json.JSONEncoder()
+  encoder = json.JSONEncoder(indent=2)
   with open(filename, 'w') as f:
     f.write(encoder.encode(defaults))
   vcs.commit("Defaults_cmd: change defaults")

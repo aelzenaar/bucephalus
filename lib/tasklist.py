@@ -22,7 +22,7 @@ def tasks():
 def add(task):
   #print("*** add task: " + task)
   filename = Path(directory)/"tasks.json"
-  encoder = json.JSONEncoder()
+  encoder = json.JSONEncoder(indent=2)
   tasklist = tasks() + [task] # Need to read before we open for writing.
   with open(filename, 'w') as f:
     f.write(encoder.encode(tasklist))
@@ -30,7 +30,7 @@ def add(task):
 
 def rm(taskids):
   filename = Path(directory)/"tasks.json"
-  encoder = json.JSONEncoder()
+  encoder = json.JSONEncoder(indent=2)
   tasklist = tasks()
   taskids = sorted([int(x) for x in taskids], reverse=True)
   for i in taskids:

@@ -29,7 +29,7 @@ def set_recent(recents):
   filename = Path(directory)/"recent.json"
   if not filename.exists():
     filename.touch()
-  encoder = json.JSONEncoder()
+  encoder = json.JSONEncoder(indent=2)
   with open(filename, 'w') as f:
     f.write(encoder.encode(recents))
 
