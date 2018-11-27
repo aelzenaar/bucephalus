@@ -254,4 +254,4 @@ def remove_record_by_id(ident):
 # Get record based on date and filename.
 def get_record_by_file(year, month, day, filename):
   db = TinyDB(directory/dbname)
-  return db.table('files').get((where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))
+  return db.table('files').get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))
