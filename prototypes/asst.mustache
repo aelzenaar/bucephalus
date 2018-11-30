@@ -1,13 +1,13 @@
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper,10pt]{amsart}
 
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{fontspec}
 \usepackage{microtype}
 
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
+% \usepackage{amsmath}
+% \usepackage{amsthm}
+% \usepackage{amssymb}
 
 % \usepackage[parfill]{parskip}
 \usepackage[dvipsnames]{xcolor}
@@ -20,6 +20,12 @@
 \DeclareSIUnit\litre{\liter}
 
 \usepackage{lastpage}
+
+\usepackage{titlesec}
+\titleformat*{\section}{\color{red}\LARGE\bfseries}
+\titleformat*{\paragraph}{\color{red}\Large\bfseries}
+\titlespacing*{\paragraph}{0.5em}{3ex}{0.75ex}
+\usepackage[hmargin=0.75in, vmargin=1in]{geometry}
 
 \usepackage{pgfplots}
 \usepackage{graphicx}
@@ -70,12 +76,15 @@
 \newtheorem*{exercise}{Exercise}
 
 \usepackage{fancyhdr}
+
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\color{red} \Large Page \textbf{\thepage} of \textbf{\pageref{LastPage}}}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+
 \pagestyle{fancy}
 
 \lhead{ {{Buc_author}}\\(ID {{template.studentid}}) }
 \chead{ {{template.course}}, {{template.semester}} }
 \rhead{Assignment {{template.asstno}}}
-\cfoot{Page \thepage}
+\cfoot{\color{red} \Large Page \textbf{\thepage} of \textbf{\pageref{LastPage}}}
 
 \author{ {{Buc_author}}\\ {{template.studentid}} \quad {{template.upi}}\\{{template.course}} }
 \date{Due on {{template.duedate}} }
