@@ -2,8 +2,6 @@ import json
 
 from pathlib import Path
 
-from tinydb import TinyDB, Query, where
-
 import config
 import vcs
 

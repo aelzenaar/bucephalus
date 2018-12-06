@@ -14,6 +14,13 @@ import vcs
 directory=config.get_user_data_dir()
 dbname="database.db"
 
+# We could probably cache the database object. However, most applications only do one db operation and then exit; the only
+# thing which might benefit is the web server. We could just cache it anyway, it's not like it will add any kind of overhead;
+# but at the same time, the way everything below is implemented (by looping through the entire DB for things like finding all
+# the represented years) is incredibly awful, so this can't be a slowdown compared to that.
+def get_database_object():
+  return TinyDB(Path(directory)/dbname, indent=2)
+
 def get_recents():
   filename = Path(directory)/"recent.json"
   decoder = json.JSONDecoder()
@@ -53,7 +60,7 @@ def write_metadata(metadata):
   metadata['ts_minute2'] = date.minute
   metadata['ts_second2'] = date.second
 
-  db = TinyDB(Path(directory)/dbname)
+  db = get_database_object()
   metatable = db.table('files')
   oldrecord = get_records_by_date(metadata['ts_year'], metadata['ts_month'], metadata['ts_day'], metadata['Buc_name'])
   if(oldrecord == None):
@@ -102,7 +109,7 @@ def open_read(item):
 
 # Update an existing record.
 def update_record(ident, meat, source=None):
-  db = TinyDB(Path(directory)/dbname)
+  db = get_database_object()
   metatable = db.table('files')
   oldrecord = get_record_by_id(ident)
   if(oldrecord == None):
@@ -150,7 +157,7 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
 
 # If tags==None, return list of all tags; otherwise return intersection of given tags.
 def get_records_by_tag(tags=None):
-  db = TinyDB(Path(directory)/dbname).table('files')
+  db = get_database_object().table('files')
   if tags == None:
     tags = []
     for item in db:
@@ -163,7 +170,7 @@ def get_records_by_tag(tags=None):
   return db.search(q.Buc_tags.all(tags))
 
 def get_records_by_date(year=None, month=None, day=None, name=None):
-  db = TinyDB(Path(directory)/dbname).table('files')
+  db = get_database_object().table('files')
 
   if year == None:
     years = []
