@@ -203,7 +203,7 @@ def get_records_by_date(year=None, month=None, day=None, name=None):
 
 # Return metadata for given ID
 def get_record_by_id(ident):
-  db = TinyDB(directory/dbname)
+  db = get_database_object()
   item = db.table('files').get(doc_id=int(ident))
   if item == None:
     return None
@@ -211,7 +211,7 @@ def get_record_by_id(ident):
 
 # Return path to actual file stored based on id and filename
 def get_single_record_path(ident, meat):
-  db = TinyDB(directory/dbname)
+  db = get_database_object()
   item = db.table('files').get(doc_id=int(ident))
   if item == None:
     return None
@@ -223,7 +223,7 @@ def get_single_record_path(ident, meat):
 
 # Return path to actual SOURCE file stored based on id and filename
 def get_single_record_src_path(ident,src):
-  db = TinyDB(directory/dbname)
+  db = get_database_object()
   item = db.table('files').get(doc_id=int(ident))
   if item == None:
     return None
@@ -235,7 +235,7 @@ def get_single_record_src_path(ident,src):
 
 # Delete given record
 def remove_record_by_id(ident):
-  db = TinyDB(directory/dbname)
+  db = get_database_object()
   item = db.table('files').get(doc_id=int(ident))
   if item == None:
     return None
@@ -260,5 +260,5 @@ def remove_record_by_id(ident):
 
 # Get record based on date and filename.
 def get_record_by_file(year, month, day, filename):
-  db = TinyDB(directory/dbname)
+  db = get_database_object()
   return db.table('files').get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))
