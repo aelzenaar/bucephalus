@@ -52,12 +52,17 @@ that needs to be passed to `dbops.add_file` which is passed by `add_record` as f
 have a vacuumed TeX file to update) or `bucfup` (if you are adding a real file of some sort) to overwrite files and set the modification date. Adding files of
 the same name on different days adds new files, as before.
 
-### Web-only functionality
-The todo list is currently online only and is read-write by everyone - i.e. there is *NO AUTHENTICATION WHATSOEVER*!!! (When I add additional features,
-e.g. integration with services and/or editors, I will implement some form of auth. Otherwise, do not leave the todo functionality running when on a public
-server - it can be disabled entirely by changing `enable_tasklist_web()` to return `False` in `config.py`, or can be made read-only by changing
-`enable_tasklist_web_write()` to return `False` in the same file.)
+### Todo list
+There are two options for using the todo list: the `buctask` command line utility, or the web interface. The command line interface allows all
+operations to be carried out: running the command with no options lists the todo list, `-a` allows one to add an item, and `-r` allows the removal
+of one or more tasks from the list.
 
+The web interface also allows all of these options by default, and is read-write by everyone. In other words, there is *NO AUTHENTICATION WHATSOEVER*!!!
+(When I add additional features, e.g. integration with services and/or editors, I will implement some form of auth. Otherwise, do not leave the web todo
+functionality running when on a public server - it can be disabled entirely by changing `enable_tasklist_web()` to return `False` in `config.py`, or can
+be made read-only by changing `enable_tasklist_web_write()` to return `False` in the same file.)
+
+### Geogebra embedding
 The web service also embeds [Geogebra](https://geogebra.org/); if an article with name ending in `.ggb` is requested, the endpoint `/r/ggb/<IDENT>/<FILENAME>` is
 transparently embedded into the article viewer and the source link allows download of the ggb file. (This feature can be disabled in `config.py`.)
 
@@ -89,7 +94,7 @@ the command line. If an author is specified to `bucadd` on the command line, it 
 `bucvac`, the fields inside the TeX file will overwrite those in defaults if there is a conflict.
 
 
-## Plan.
+## Plan
 [Project board](https://github.com/aelzenaar/bucephalus/projects/1)
 
 ## Dependencies
