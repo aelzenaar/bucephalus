@@ -9,12 +9,14 @@ from pathlib import Path
 
 
 parser = argparse.ArgumentParser(description='Bucephalus: Update File')
-parser.add_argument('filename', metavar='FILENAME', type=str, nargs=1,
+parser.add_argument('filename', metavar='FILENAME', type=str,
                    help='filename for processing')
-parser.add_argument('id', metavar='IDENT', type=int, nargs=1,
+parser.add_argument('id', metavar='IDENT', type=int,
                    help='id number to update')
+parser.add_argument('-p', help='pin the article', action='store_true', default=False)
 
 args = vars(parser.parse_args())
 
-if dbops.update_record(args['id'][0], args['filename'][0]) == None:
+
+if dbops.update_record(args['id'], args['filename'], pin=args['p']) == None:
   print("Error")

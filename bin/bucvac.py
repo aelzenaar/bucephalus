@@ -19,7 +19,7 @@ directory2=config.get_install_dir()/"prototypes"
 
 defaults=config.get_defaults_file_path()
 
-def vacuum(filename,output=None,update=None):
+def vacuum(filename,output=None,update=None,pin=False):
   try:
     warned = False
     if not(Path(filename).suffix == '.tex'):
@@ -91,15 +91,15 @@ def vacuum(filename,output=None,update=None):
     metadata.pop('template', None)
     if (output == None):
       if (update == None):
-        dbops.add_record(title, author, tags, pdfname, filename, metadata, False)
+        dbops.add_record(title, author, tags, pdfname, filename, metadata, False, pin=pin)
       else:
-        dbops.update_record(update, pdfname, filename)
+        dbops.update_record(update, pdfname, filename, pin=pin)
     else:
       copyfile(filename, Path(pdfname).with_suffix('.tex'))
       if (update == None):
-        dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False)
+        dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False, pin=pin)
       else:
-        dbops.update_record(update, pdfname, Path(pdfname).with_suffix('.tex'))
+        dbops.update_record(update, pdfname, Path(pdfname).with_suffix('.tex'), pin=pin)
       Path(pdfname).with_suffix('.tex').unlink()
   except:
     if(warned):
@@ -107,19 +107,17 @@ def vacuum(filename,output=None,update=None):
     raise
 
 parser = argparse.ArgumentParser(description='Bucephalus Vacuum TeX Script.')
-parser.add_argument('filename', metavar='FILENAME', type=str, nargs=1,
+parser.add_argument('filename', metavar='FILENAME', type=str,
                    help='filename for processing')
-parser.add_argument('-o', metavar='OUTPUTFILE', type=str, nargs=1,
+parser.add_argument('-o', metavar='OUTPUTFILE', type=str,
                    help='optional output filename', default=None)
-parser.add_argument('-u', metavar='UPDATEIDENT', type=int, nargs=1,
+parser.add_argument('-u', metavar='UPDATEIDENT', type=int,
                    help='id to update', default=None)
+parser.add_argument('-p', help='pin the article', action='store_true', default=False)
 
 args = vars(parser.parse_args())
 
 print(args)
 
-update = args['u'][0] if args['u'] != None else None
-output = args['o'][0] if args['o'] != None else None
-
-vacuum(args['filename'][0], output,update)
+vacuum(args['filename'], args['o'],args['u'],args['p'])
 

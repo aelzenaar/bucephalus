@@ -19,6 +19,14 @@ import config
 import search
 import tasklist
 
+# Return a link to the pinned article from the database, or None if it doesn't exist.
+def get_pinned():
+  pinned = dbops.get_pinned()
+  if pinned == None:
+    return None
+  else:
+    return {'loc': url_for('v_raw', ident=pinned.doc_id), 'name': menu_name_for_item(pinned)}
+
 def get_fortune():
   now = datetime.now()
   if(now.month == 3 and now.day == 14):
@@ -173,7 +181,8 @@ def r_file(ident=None,meat=None,src=None):
 # Index endpoint.
 @app.route('/')
 def index():
-  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"), randomse=get_randomse(), viewernotes=get_fortune())
+  return render_template("index.html", timestamp=datetime.now().strftime("Clock: %A %d %B - %Y/%m/%d %H:%M:%S:%f"),
+                         randomse=get_randomse(), viewernotes=get_fortune(), pinned=get_pinned())
 
 # If we don't specify a view, we probably want the index.
 @app.route('/v/')
@@ -399,7 +408,7 @@ def v_tasks():
 def brew_coffee():
   abort(418)
 
-@app.errorhandler(Exception)
+#@app.errorhandler(Exception)
 def handle_error(e):
   if isinstance(e, RequestRedirect):
     return e

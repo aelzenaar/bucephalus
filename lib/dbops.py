@@ -22,7 +22,7 @@ def get_database_object():
   return TinyDB(Path(directory)/dbname, indent=2)
 
 def get_recents():
-  filename = Path(directory)/"recent.json"
+  filename = config.get_recent_file_path()
   decoder = json.JSONDecoder()
   if not filename.exists():
     return []
@@ -33,7 +33,7 @@ def get_recents():
   return ids
 
 def set_recent(recents):
-  filename = Path(directory)/"recent.json"
+  filename = config.get_recent_file_path()
   if not filename.exists():
     filename.touch()
   encoder = json.JSONEncoder(indent=2)
@@ -70,6 +70,7 @@ def write_metadata(metadata):
     metatable.update(metadata, doc_ids=[oldrecord.doc_id])
 
   add_recent(dbid)
+  return dbid
 
 
 # Copy a file into the database, based on the given metadata; check for overwriting if overwrite == true.
@@ -108,7 +109,7 @@ def open_read(item):
   return open(dd / str(item['ts_year']) / str(item['ts_month']) / str(item['ts_day']) / str(item['Buc_name']), 'rb')
 
 # Update an existing record.
-def update_record(ident, meat, source=None):
+def update_record(ident, meat, source=None, pin=False):
   db = get_database_object()
   metatable = db.table('files')
   oldrecord = get_record_by_id(ident)
@@ -116,14 +117,17 @@ def update_record(ident, meat, source=None):
     return False
   if(oldrecord['Buc_name'] != Path(meat).name):
     print("*** Error: updating file with wrong name.")
+    return False
 
   add_file(oldrecord, True, meat, source)
-  write_metadata(oldrecord)
+  dbid = write_metadata(oldrecord)
+  if pin:
+    set_pinned(dbid)
   vcs.commit("dbops: update record")
   return True
 
 # Create a new record, try not to overwrite existing stuff.
-def add_record(title, author, tags, meat, source=None, metadata=None, delay=False):
+def add_record(title, author, tags, meat, source=None, metadata=None, delay=False, pin=False):
   meatpath = Path(meat)
   srcpath = None
 
@@ -150,7 +154,9 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
     return None
 
   add_file(metadata, False, meatpath, srcpath)
-  write_metadata(metadata)
+  dbid = write_metadata(metadata)
+  if pin:
+    set_pinned(dbid)
 
   vcs.commit("dbops: add new record")
   return metadata
@@ -262,3 +268,22 @@ def remove_record_by_id(ident):
 def get_record_by_file(year, month, day, filename):
   db = get_database_object()
   return db.table('files').get((where('ts_year')==int(year)) & (where('ts_month')==int(month)) & (where('ts_day')==int(day)) & ((where('Buc_name') == filename) | (where('Buc_source') == filename)))
+
+def get_pinned():
+  filename = config.get_pinned_file_path()
+  decoder = json.JSONDecoder()
+  if not filename.exists():
+    return None
+
+  with open(filename) as f:
+    ident = decoder.decode(f.read())['pinned']
+
+  return get_record_by_id(ident)
+
+def set_pinned(ident):
+  filename = config.get_pinned_file_path()
+  if not filename.exists():
+    filename.touch()
+  encoder = json.JSONEncoder(indent=2)
+  with open(filename, 'w') as f:
+    f.write(encoder.encode({'pinned': ident}))

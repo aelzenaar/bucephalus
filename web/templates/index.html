@@ -13,6 +13,11 @@ made in the past, it's quick and functional and the text is in a serif font.
   <li><a href="/v/tasks">Inspect task list.</a></li>
 </ul>
 
+{% if pinned is not none %}
+<h2>Pinned article</h2>
+The following article has been pinned: <a href="{{pinned.loc}}">{{pinned.name}}</a>
+{% endif %}
+
 {% if randomse is not none %}
 <h2>Random thing from StackExchange</h2>
 <h3>{{ randomse.qtitle }}</h3>

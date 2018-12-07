@@ -8,8 +8,13 @@ def get_user_data_dir():
 def get_install_dir():
   return Path(__file__).parent.parent
 
+# Config and data file paths
 def get_defaults_file_path():
   return get_user_data_dir()/"defaults.json"
+def get_recent_file_path():
+  return get_user_data_dir()/"recent.json"
+def get_pinned_file_path():
+  return get_user_data_dir()/"pinned.json"
 
 # Enable the long-form random content on the homepage.
 def enable_long_fortunes():
