@@ -5,6 +5,7 @@ from werkzeug import unescape
 app = Flask(__name__)
 
 import sys
+import traceback
 
 import requests
 from http import HTTPStatus
@@ -408,8 +409,9 @@ def v_tasks():
 def brew_coffee():
   abort(418)
 
-#@app.errorhandler(Exception)
+@app.errorhandler(Exception)
 def handle_error(e):
+  traceback.print_exc()
   if isinstance(e, RequestRedirect):
     return e
   if isinstance(e, HTTPException):
