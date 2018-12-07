@@ -260,6 +260,16 @@ def remove_record_by_id(ident):
   if not(sourcepath == None):
     sourcepath.unlink()
 
+  # Remove deleted item from recents, if needed
+  recent = get_recents()
+  if int(ident) in recent:
+    recent.pop(recent.index(int(ident)))
+  set_recent(recent)
+
+  # Remove deleted item from pinned, if needed
+  if get_pinned() == int(ident):
+    unset_pinned()
+
   print("*** Deleted.")
   vcs.commit("dbops: delete record")
   return True
@@ -278,7 +288,10 @@ def get_pinned():
   with open(filename) as f:
     ident = decoder.decode(f.read())['pinned']
 
-  return get_record_by_id(ident)
+  return ident
+
+def unset_pinned():
+  config.get_pinned_file_path().unlink()
 
 def set_pinned(ident):
   filename = config.get_pinned_file_path()

@@ -22,11 +22,12 @@ import tasklist
 
 # Return a link to the pinned article from the database, or None if it doesn't exist.
 def get_pinned():
-  pinned = dbops.get_pinned()
-  if pinned == None:
+  pinnedid = dbops.get_pinned()
+  if pinnedid == None:
     return None
-  else:
-    return {'loc': url_for('v_raw', ident=pinned.doc_id), 'name': menu_name_for_item(pinned)}
+
+  pinned = dbops.get_record_by_id()
+  return {'loc': url_for('v_raw', ident=pinned.doc_id), 'name': menu_name_for_item(pinned)}
 
 def get_fortune():
   now = datetime.now()
@@ -318,6 +319,7 @@ def v_recent():
   ids = dbops.get_recents()
   for i in ids:
     doc = dbops.get_record_by_id(i)
+    print(str(i) + ' ' + str(doc))
     items.append({'loc': url_for('v_time', year=doc['ts_year'], month=doc['ts_month'],day=doc['ts_day'],meat=doc['Buc_name']), 'name': menu_name_for_item(doc)})
 
   return render_template('viewer.html',items=items, view_name='recent', breadcrumbs=[{'loc':url_for('v_recent'),'name':'By recent', 'current':1}],
