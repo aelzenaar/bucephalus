@@ -26,7 +26,7 @@ def get_pinned():
   if pinnedid == None:
     return None
 
-  pinned = dbops.get_record_by_id()
+  pinned = dbops.get_record_by_id(pinnedid)
   return {'loc': url_for('v_raw', ident=pinned.doc_id), 'name': menu_name_for_item(pinned)}
 
 def get_fortune():
