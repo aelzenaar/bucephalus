@@ -330,19 +330,18 @@ def v_recent():
 
 # Obsolete
 @app.route('/v/grep/post')
-@app.route('/v/grep/<q>/<ident>/<meat>')
 def v_grep_obsolete():
   return abort(410)
 
 # Main endpoint for search-by-ID
 @app.route('/v/grep/')
-def v_grep(q=None,ident=None,meat=None):
+def v_grep():
   q = request.args.get('q', '')
   if q == '':
     return render_template("v_grep.html", searchtype="initial", viewernotes=get_fortune())
 
   # So we have a query to search.
-  caseSensitive =  request.args.get('c', False, bool)
+  caseSensitive = request.args.get('c', False, bool)
   files = search.search_files_for_string(q, caseSensitive)
 
   items = []
@@ -359,8 +358,7 @@ def v_grep(q=None,ident=None,meat=None):
       meat = parts[3]
     item = dbops.get_record_by_file(year, month, day, meat)
     if not(item == None):
-      items.append({'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']),
-                    'name': menu_name_for_item(item)})
+      items.append({'loc': url_for('v_grep_viewer', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name': menu_name_for_item(item)})
   if (items == []):
     return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 
@@ -368,6 +366,20 @@ def v_grep(q=None,ident=None,meat=None):
                                         breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
                                                        {'loc': url_for('v_grep', q=q, c='1' if caseSensitive else '0'), 'name': q, 'current':1}],
                                         viewernotes=get_fortune())
+
+@app.route('/v/grep/<q>/<ident>/<meat>')
+def v_grep_viewer(q=None,ident=None,meat=None):
+  if (ident == None) != (meat == None):
+    return abort(404)
+  if not(ident == None) and not(meat == None):
+    item = dbops.get_record_by_id(ident)
+    if(item == None):
+      return abort(404)
+    if not(item['Buc_name'] == meat):
+      return abort(404)
+    return render_article(item, [{'loc': url_for('v_grep'),'name':'By grep'},
+                                 {'loc': url_for('v_grep', q=q), 'name': q},
+                                 {'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
 
 @app.route('/v/tasks', methods=['POST', 'GET'])
 def v_tasks():
