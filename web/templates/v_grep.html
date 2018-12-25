@@ -2,10 +2,10 @@
 {% set page_title = "View by searching" %}
 {% block content %}
   <h2>Search content of text files and source files</h2>
-  <form method="post" action="{{url_for('v_grep_post')}}">
+  <form method="get" action="{{url_for('v_grep')}}">
     Query (accepts regex's): <input type="text" name="q"/>
     <input type="submit" value="Search">
-    <input type="checkbox" name="checkCase" value="1" checked> <label for="checkCase">Case sensitive</label>
+    <input type="checkbox" name="c" value="1" checked> <label for="c">Case sensitive</label>
   </form>
   {% if searchtype == "empty" %}
   <div class="error">Query returned no results: {{q}}</div>

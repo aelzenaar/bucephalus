@@ -327,44 +327,23 @@ def v_recent():
 
   return abort(501)
 
-# Endpoint to handle search-by-content. Redirects back to the main endpoint.
-@app.route('/v/grep/post', methods=['POST'])
-def v_grep_post():
-  if(request.form['q'] == ''):
-    return redirect(url_for('v_grep', q = '#'))
 
-  return redirect(url_for('v_grep', q = request.form['q'], c=request.form.get('checkCase', '0')))
+# Obsolete
+@app.route('/v/grep/post')
+@app.route('/v/grep/<q>/<ident>/<meat>')
+def v_grep_obsolete():
+  return abort(410)
 
 # Main endpoint for search-by-ID
 @app.route('/v/grep/')
-@app.route('/v/grep/<q>/')
-@app.route('/v/grep/<q>/<ident>/<meat>')
 def v_grep(q=None,ident=None,meat=None):
-  if q == None:
+  q = request.args.get('q', '')
+  if q == '':
     return render_template("v_grep.html", searchtype="initial", viewernotes=get_fortune())
-  if q == '#':
-    return render_template("v_grep.html", searchtype="noquery", viewernotes=get_fortune())
-
-  # One of ident and meat was provided but not the other
-  if (ident == None) != (meat == None):
-    return abort(404)
-
-  # Query, ident, and meat provided.
-  if not(ident == None) and not(meat == None):
-    item = dbops.get_record_by_id(ident)
-    if(item == None):
-      return abort(404)
-    if not(item['Buc_name'] == meat):
-      return abort(404)
-    return render_article(item, [{'loc': url_for('v_grep'),'name':'By grep'},
-                                {'loc': url_for('v_grep', q=q), 'name': q},
-                                {'loc': url_for('v_grep', q=q, ident=item.doc_id, meat=item['Buc_name']), 'name':meat, 'current':1}])
 
   # So we have a query to search.
-  case = False if request.args.get("c", '1') == '0' else True
-  files = search.search_files_for_string(q, case)
-  if(files == []):
-    return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
+  caseSensitive =  request.args.get('c', False, bool)
+  files = search.search_files_for_string(q, caseSensitive)
 
   items = []
   for f in files:
@@ -385,9 +364,10 @@ def v_grep(q=None,ident=None,meat=None):
   if (items == []):
     return render_template("v_grep.html", searchtype="empty", q=q, viewernotes=get_fortune())
 
-  return render_template('viewer.html', items=items, view_name='grep', breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
-                                                                                     {'loc': url_for('v_grep', q=q), 'name': q, 'current':1}],
-                                                                       viewernotes=get_fortune())
+  return render_template('viewer.html', items=items, view_name='grep',
+                                        breadcrumbs = [{'loc': url_for('v_grep'),'name':'By grep'},
+                                                       {'loc': url_for('v_grep', q=q, c='1' if caseSensitive else '0'), 'name': q, 'current':1}],
+                                        viewernotes=get_fortune())
 
 @app.route('/v/tasks', methods=['POST', 'GET'])
 def v_tasks():
