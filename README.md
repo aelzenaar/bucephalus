@@ -1,5 +1,7 @@
 # bucephalus
 
+:warning: **If you used `bucvac` prior to 2019, you should read the documentation below on stencils as there have been non-backward-compatible changes.**  :warning:
+
 This repository is only a test. [There is nothing to see here](https://www.youtube.com/watch?v=V2MIvUx9uiQ).
 
 Long-term goal: [futuristic](https://abstrusegoose.com/440) paperless society or something.
@@ -42,7 +44,7 @@ add the given task string to the end, or remove the given items from the list.
 * `bucmup [-h] [-t TITLE] [-a AUTHOR] [-T TAGS [TAGS ...]] IDENT` - update the existing file metadata at id IDENT with the given metadata, or just display the current metadata if no optional arguments are given.
 * `bucrm <identifier>` - remove the given database entry permanently and all the files associated with it. The identifier could be reused, I don't know.
 * `bucvac [-h] [-o OUTPUTFILE] [-u UPDATEIDENT] [-p] FILENAME` - vacuum up the given TeX source file which includes a section of JSON at the start. See usage below.
-* `bucdef [-h] [-a KEY KEY | -r KEY]` - change the default tags fed into bucvac prototypes.
+* `bucdef [-h] [-a KEY VALUE | -r KEY]` - change the default tags fed into bucvac prototypes.
 
 Some of these commands will check that you put sane values in. Some of them won't. Finding out which is which is a fun little game
 you can play if you don't care about your data. *If these commands go wrong, they may trample your database.*
@@ -90,7 +92,7 @@ metadata of the file to be added, the user-provided data in the metadata dict se
 See the [stencils/](stencils/) subdirectory for some examples. Stencils are, by default, searched for in `<user data dir>/stencils`
 and `<install dir>/stencils`, in that order. The directories to be searched can be configured by editing `config.get_stencils_search_dirs()`.
 
-As of commit 88336b689fd73220c4ae76d136548755a95a6b96 (1 Jan 2019, see issue #3), there have been non-backward-compatible changes to `bucvac`. From
+As of commit https://github.com/aelzenaar/bucephalus/commit/88336b689fd73220c4ae76d136548755a95a6b96 (1 Jan 2019, see issue #3), there have been non-backward-compatible changes to `bucvac`. From
 a practical standpoint, **at least** the following changes need to be made:
 
   * In TeX files to be processed, the addition of the version key `Hp2_version` and the renaming of `Buc_hp` to `Hp2_stencil`.
