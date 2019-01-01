@@ -12,4 +12,5 @@ sys.argv.pop(0)
 ident = sys.argv.pop(0)
 
 if dbops.remove_record_by_id(ident) == None:
-  print("Error")
+  print("*** Error: failed to remove record.")
+

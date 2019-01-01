@@ -18,7 +18,6 @@ def tasks():
 
 
 def add(task):
-  #print("*** add task: " + task)
   filename = Path(directory)/"tasks.json"
   encoder = json.JSONEncoder(indent=2)
   tasklist = tasks() + [task] # Need to read before we open for writing.

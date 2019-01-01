@@ -21,7 +21,6 @@ parser.add_argument('-T', metavar='TAGS', type=str, nargs='+',
 args = vars(parser.parse_args())
 
 record = dbops.get_record_by_id(args['id'][0])
-print("Current metadata: " + str(record))
 didSomething = False
 if(args['a'] != None):
   record['Buc_author'] = args['a'][0]
@@ -34,5 +33,4 @@ if(args['T'] != None):
   didSomething = True
 
 if didSomething:
-  print("New metadata: " + str(record))
   dbops.write_metadata(record)

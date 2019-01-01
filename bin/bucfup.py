@@ -19,4 +19,4 @@ args = vars(parser.parse_args())
 
 
 if dbops.update_record(args['id'], args['filename'], pin=args['p']) == None:
-  print("Error")
+  print("*** Error: failed to update record.")

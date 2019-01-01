@@ -31,7 +31,7 @@ def vacuum(filename,output=None,update=None,pin=False):
     warned = False
     if not(Path(filename).suffix == '.tex'):
       warned = True
-      print("Warning: you didn't include the .tex suffix on the end of the file: " + str(filename), file=sys.stderr)
+      print("*** Warning: you didn't include the .tex suffix on the end of the file: " + str(filename), file=sys.stderr)
 
     decoder = json.JSONDecoder()
     metadata = {'template':{}}
@@ -56,7 +56,7 @@ def vacuum(filename,output=None,update=None,pin=False):
       metadata["content"] = content
 
     if ("Hp2_version" not in metadata["template"]) or (metadata["template"]["Hp2_version"] != 2):
-      print("Error: your input file seems to be for an earlier version of hp. Try bucvac instead.",file=sys.stderr)
+      print("*** Error: your input file seems to be for an earlier version of hp. Try bucvac instead.",file=sys.stderr)
       abort(2)
 
     if output == None:
@@ -66,7 +66,7 @@ def vacuum(filename,output=None,update=None,pin=False):
 
     if '_' in str(pdfname):
       warned = True
-      print("Warning: underscore may make XeLaTeX throw a fit.", file=sys.stderr)
+      print("*** Warning: underscore may make XeLaTeX throw a fit.", file=sys.stderr)
 
     # This section of code works out what the initial metadata we need to give the template is, by
     # either finding the old metadata (if we're updating) or running add_record with delay=True
@@ -80,7 +80,7 @@ def vacuum(filename,output=None,update=None,pin=False):
     else:
       metadata.update(dbops.get_record_by_id(int(update)))
       if(metadata['Buc_name'] != str(pdfname)):
-        print("Error: Record ID " + str(update) + " with filename " + metadata['Buc_name'] + " doesn't match filename to be added: " + str(pdfname),file=sys.stderr)
+        print("*** Error: Record ID " + str(update) + " with filename " + metadata['Buc_name'] + " doesn't match filename to be added: " + str(pdfname),file=sys.stderr)
         sys.exit(1)
 
     # Actually render the stencil with the given metadata and content

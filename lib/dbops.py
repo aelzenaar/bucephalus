@@ -2,6 +2,8 @@ import hashlib
 import datetime
 import json
 import sys
+import os
+import errno
 
 from shutil import copyfile
 from pathlib import Path
@@ -10,6 +12,29 @@ from tinydb import TinyDB, Query, where
 
 import config
 import vcs
+
+class BucephalusException(Exception):
+  pass
+
+# Raised when a file in the database is to be updated, but the file in the database has a different
+# name to the file to be added.
+class UpdateDifferentFile(BucephalusException):
+  def __init__(self, file_in_db, file_to_add):
+    self.file_in_db = file_in_db
+    self.file_to_add = file_to_add
+    self.message = "File to be updated has wrong name: file in database is '" + file_in_db + "', attempted to updated with '" + file_to_add + "'"
+
+  def __str__(self):
+    return self.message
+
+# Raised when a file in the database is to be updated, but the ID is not in the database.
+class UpdateMissingFile(BucephalusException):
+  def __init__(self, ident):
+    self.ident = ident
+    self.message = "File to be updated doesn't already exist in database: nonexistent ID is " + str(ident)
+
+  def __str__(self):
+    return self.message
 
 directory=config.get_user_data_dir()
 dbname="database.db"
@@ -77,21 +102,21 @@ def write_metadata(metadata):
 def add_file(metadata, overwrite, filename, source = None):
   meatpath = Path(filename)
   if not meatpath.exists():
-    sys.exit("*** File (" + filename + ") does not exist.")
+    raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(meatpath))
 
   dd = Path(directory)
   if not(dd.exists()):
     dd.mkdir()
   if not(dd.is_dir()):
-    sys.exit("*** Data directory (" + directory + ") is not a directory.")
+    raise NotADirectoryError(errno.ENOTDIR, os.strerror(errno.ENOTDIR), str(dd))
 
   datedir = dd / str(metadata['ts_year']) / str(metadata['ts_month']) / str(metadata['ts_day'])
   if (not overwrite) and (datedir / meatpath.name).exists():
-    sys.exit("*** Overwrite aborted: " + str(datedir / meatpath.name))
+    raise FileExistsError(errno.EEXIST, os.strerror(errno.EEXIST), str(datedir / meatpath.name))
   if not(datedir.exists()):
     datedir.mkdir(parents=True)
   if not(datedir.is_dir()):
-    sys.exit("*** Datestamp directory (" + directory + ") is not a directory.")
+    raise NotADirectoryError(errno.ENOTDIR, os.strerror(errno.ENOTDIR), str(datedir))
 
   # Copy file to location, and sources if needed
   copyfile(str(meatpath), str(datedir / meatpath.name))
@@ -101,7 +126,7 @@ def add_file(metadata, overwrite, filename, source = None):
     if not(srcdest.exists()):
       srcdest.mkdir()
     if not(srcdest.is_dir()):
-      sys.exit("*** Source directory (" + directory + ") is not a directory.")
+      raise NotADirectoryError(errno.ENOTDIR, os.strerror(errno.ENOTDIR), str(srcdest))
     copyfile(str(srcpath), str(srcdest/srcpath.name))
 
 # Open an item for reading.
@@ -114,10 +139,9 @@ def update_record(ident, meat, source=None, pin=False):
   metatable = db.table('files')
   oldrecord = get_record_by_id(ident)
   if(oldrecord == None):
-    return False
+    raise UpdateMissingFile(ident)
   if(oldrecord['Buc_name'] != Path(meat).name):
-    print("*** Error: updating file with wrong name.")
-    return False
+    raise UpdateDifferentFile(oldrecord['Buc_name'], str(Path(meat).name))
 
   add_file(oldrecord, True, meat, source)
   dbid = write_metadata(oldrecord)
@@ -149,9 +173,6 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
       metadata['Buc_source'] = srcpath.name
   if delay == True:
     return metadata
-
-  if not(meatpath.exists()):
-    return None
 
   add_file(metadata, False, meatpath, srcpath)
   dbid = write_metadata(metadata)

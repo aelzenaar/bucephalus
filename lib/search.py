@@ -17,7 +17,6 @@ def list_files():
   return recurse(config.get_user_data_dir())
 
 def search_file_for_string(path, regexp):
-  print(path)
   with path.open(mode='rb') as f:
     return (True if regexp.search(f.read()) else False)
 

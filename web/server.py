@@ -129,7 +129,6 @@ def render_article(item, breadcrumbs):
   if (config.enable_ggb_integration()) and (item['Buc_name'][-4:] == '.ggb'):
     rawname = url_for('r_ggb', ident=str(item.doc_id), meat=item['Buc_name'])
     source = url_for('r_file', ident=str(item.doc_id), meat=item['Buc_name'])
-    print(rawname)
   else:
     rawname = url_for('r_file', ident=str(item.doc_id), meat=item['Buc_name'])
     source = url_for('r_file', ident=str(item.doc_id), meat='src', src=item['Buc_source']) if 'Buc_source' in item else None
@@ -318,7 +317,6 @@ def v_recent():
   ids = dbops.get_recents()
   for i in ids:
     doc = dbops.get_record_by_id(i)
-    print(str(i) + ' ' + str(doc))
     items.append({'loc': url_for('v_time', year=doc['ts_year'], month=doc['ts_month'],day=doc['ts_day'],meat=doc['Buc_name']), 'name': menu_name_for_item(doc)})
 
   return render_template('viewer.html',items=items, view_name='recent', breadcrumbs=[{'loc':url_for('v_recent'),'name':'By recent', 'current':1}],
@@ -388,11 +386,9 @@ def v_tasks():
   if(request.method == 'POST'):
     if not config.enable_tasklist_web_write():
       return abort(405)
-    print("in post")
     if 'add' in request.form:
       tasklist.add(request.form['toadd'])
     elif 'todelete' in request.form:
-      print(request.form.getlist('delete'))
       tasklist.rm(request.form.getlist('delete'))
 
   return render_template('tasklist.html', tasks=tasklist.tasks(), breadcrumbs = [{'loc': url_for('v_tasks'),'name':'Task list','current':1}],

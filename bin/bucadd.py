@@ -41,7 +41,5 @@ for tag in args['tags']:
   if not(tag in tags):
     tags.append(tag)
 
-print(filename)
-
 if dbops.add_record(title, author, tags, filename, pin=pin) == None:
-  print("Error")
+  print("*** Error: failed to add record.")
