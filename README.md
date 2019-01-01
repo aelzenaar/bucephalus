@@ -37,11 +37,11 @@ After installation, at the time of writing the following commands will be availa
 * `bucserve` - start the web server.
 * `buctask [-h] [-a DESCRIPTION | -r NUMBER [NUMBER ...]]` - manage the task list from the command line. If no options given, display the list; otherwise
 add the given task string to the end, or remove the given items from the list.
-* `bucadd [-h] [-a AUTHOR] [-p] FILENAME TITLE TAGS [TAGS ...]` (must have at least one tag, author optional) - add the given file to the bucephalus database.
+* `bucadd [-h] [-a AUTHOR] [-p] FILENAME TITLE TAGS [TAGS ...]` (must have at least one tag, author optional) - add the given file to the bucephalus database. See usage below.
 * `bucfup [-h] [-p] FILENAME IDENT` - update the existing file contents at id IDENT from FILENAME.
 * `bucmup [-h] [-t TITLE] [-a AUTHOR] [-T TAGS [TAGS ...]] IDENT` - update the existing file metadata at id IDENT with the given metadata, or just display the current metadata if no optional arguments are given.
 * `bucrm <identifier>` - remove the given database entry permanently and all the files associated with it. The identifier could be reused, I don't know.
-* `bucvac [-h] [-o OUTPUTFILE] [-u UPDATEIDENT] [-p] FILENAME` - vacuum up the given TeX source file which includes a section of JSON at the start, run it through the appropriate template (templates are installed in `/opt/bucephalus/prototypes`, and bucvac will also look in `~/bucephalus/prototypes`; the template chosen is given by the `Buc_hp` JSON key), and add it to the server after running XeLaTeX on it twice. The filename on the server will be outputname.pdf. Only overwrites files if -u is given a valid ID.
+* `bucvac [-h] [-o OUTPUTFILE] [-u UPDATEIDENT] [-p] FILENAME` - vacuum up the given TeX source file which includes a section of JSON at the start. See usage below.
 * `bucdef [-h] [-a KEY KEY | -r KEY]` - change the default tags fed into bucvac prototypes.
 
 Some of these commands will check that you put sane values in. Some of them won't. Finding out which is which is a fun little game
