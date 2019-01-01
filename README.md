@@ -87,8 +87,8 @@ not the string).
 
 Each such file has to be associated with a stencil file by setting the key `Hp2_stencil`. This is a [jinja2](http://jinja.pocoo.org/) template which is passed the
 metadata of the file to be added, the user-provided data in the metadata dict section of the TeX file, and the content section of this file.
-See the [stencils/](stencils/) subdirectory for some examples. Stencils are, by default, searched for in `<install dir>/stencils`
-and `<user data dir>/stencils`, in that order. The directories to be searched can be configured by editing `config.get_stencils_search_dirs()`.
+See the [stencils/](stencils/) subdirectory for some examples. Stencils are, by default, searched for in `<user data dir>/stencils`
+and `<install dir>/stencils`, in that order. The directories to be searched can be configured by editing `config.get_stencils_search_dirs()`.
 
 As of commit 88336b689fd73220c4ae76d136548755a95a6b96 (1 Jan 2019, see issue #3), there have been non-backward-compatible changes to `bucvac`. From
 a practical standpoint, **at least** the following changes need to be made:

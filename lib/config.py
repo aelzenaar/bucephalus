@@ -4,18 +4,23 @@ from pathlib import Path
 def get_user_data_dir():
   return Path.home()/"bucephalus"
 
-# Directory for library files, prototypes for horsepee, and so forth
+# Directory for library files, default stencils for bucvac, and so forth
 def get_install_dir():
   return Path(__file__).parent.parent
 
-# Config and data file paths
+# File holding default keys used by bucadd and bucvac; edited by bucdef
 def get_defaults_file_path():
   return get_user_data_dir()/"defaults.json"
+
+# File holding recently added/modified articles
 def get_recent_file_path():
   return get_user_data_dir()/"recent.json"
+
+# File holding details of article pinned to front page
 def get_pinned_file_path():
   return get_user_data_dir()/"pinned.json"
 
+# Search paths for bucvac stencils, in search order.
 def get_stencils_search_dirs():
   return [get_user_data_dir()/"stencils", get_install_dir()/"stencils"]
 
