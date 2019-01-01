@@ -1,12 +1,17 @@
+# This is the buchp2 command for Bucephalus.
+# It implements the 'new version of bucvac': it allows a user to 'vacuum' up
+# a TeX file into the database as a PDF, with templating.
+
 import json
-import pystache
 import argparse
+import jinja2
 
 import tempfile
 import subprocess
 
 from pathlib import Path
 from shutil import copyfile
+import functools
 
 import dbops
 import config
@@ -14,17 +19,19 @@ import config
 import os
 import sys
 
-directory1=config.get_user_data_dir()/"prototypes"
-directory2=config.get_install_dir()/"prototypes"
 
 defaults=config.get_defaults_file_path()
+
+def filter_hp2_set_meta(metadata, value, key):
+  metadata[key] = value
+  return value
 
 def vacuum(filename,output=None,update=None,pin=False):
   try:
     warned = False
-    if not(filename.suffix == '.tex'):
+    if not(Path(filename).suffix == '.tex'):
       warned = True
-      print("Warning: you included the .tex suffix on the end of the file: " + str(filename),file=sys.stderr)
+      print("Warning: you didn't include the .tex suffix on the end of the file: " + str(filename), file=sys.stderr)
 
     decoder = json.JSONDecoder()
     metadata = {'template':{}}
@@ -48,6 +55,10 @@ def vacuum(filename,output=None,update=None,pin=False):
       metadata["template"].update(decoder.decode(userdef))
       metadata["content"] = content
 
+    if ("Hp2_version" not in metadata["template"]) or (metadata["template"]["Hp2_version"] != 2):
+      print("Error: your input file seems to be for an earlier version of hp. Try bucvac instead.",file=sys.stderr)
+      abort(2)
+
     if output == None:
       pdfname = Path(filename).with_suffix('.pdf')
     else:
@@ -57,29 +68,32 @@ def vacuum(filename,output=None,update=None,pin=False):
       warned = True
       print("Warning: underscore may make XeLaTeX throw a fit.", file=sys.stderr)
 
-    title = metadata['template']['Buc_title']
+    # This section of code works out what the initial metadata we need to give the template is, by
+    # either finding the old metadata (if we're updating) or running add_record with delay=True
+    # to work out what the new docid and so forth will be.
     author = metadata['template']['Buc_author']
     tags = metadata['template']['Buc_tags']
-    templatename = metadata['template']['Buc_hp']
+    templatename = metadata['template']['Hp2_stencil']
+    title = (metadata['template']['Buc_title']) if 'Buc_title' in metadata['template'] else "Hp2 temporary title: template " + templatename
     if update == None:
-      metadata.update(dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), None, True))
+      metadata.update(dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata=None, delay=True))
     else:
       metadata.update(dbops.get_record_by_id(int(update)))
       if(metadata['Buc_name'] != str(pdfname)):
-        print("Record ID " + str(update) + " with filename " + metadata['Buc_name'] + " doesn't match filename to be added: " + str(pdfname))
+        print("Error: Record ID " + str(update) + " with filename " + metadata['Buc_name'] + " doesn't match filename to be added: " + str(pdfname),file=sys.stderr)
         sys.exit(1)
 
-    templatepath = directory1/(templatename + ".mustache")
-    if not (templatepath.exists()):
-      templatepath = directory2/(templatename + ".mustache")
-      if not(templatepath.exists()):
-        print("No template found: " + str(templatepath),file=sys.stderr)
-        sys.exit(1)
+    # Actually render the stencil with the given metadata and content
+    loaders = []
+    for d in config.get_stencils_search_dirs():
+      loaders.append(jinja2.loaders.FileSystemLoader(str(d)))
+    env = jinja2.Environment(loader = jinja2.loaders.ChoiceLoader(loaders))
+    env.filters['hp2_set_meta'] = functools.partial(filter_hp2_set_meta, metadata)
+    template = env.get_template(templatename+".tex")
+    print(metadata)
+    rendered = template.render(metadata)
 
-    with templatepath.open() as f:
-      templateContent = f.read()
-      rendered = pystache.render(templateContent, metadata)
-
+    # Compile the rendered file
     with tempfile.NamedTemporaryFile() as f:
       f.write(bytes(rendered, encoding="utf-8"))
       f.flush()
@@ -87,6 +101,7 @@ def vacuum(filename,output=None,update=None,pin=False):
       subprocess.run("xelatex -no-pdf -halt-on-error -output-directory . -jobname " + str(Path(pdfname).with_suffix('')) + " " + f.name, shell=True, check=True)
       subprocess.run("xelatex -interaction=batchmode -halt-on-error -output-directory . -jobname " + str(Path(pdfname).with_suffix('')) + " " + f.name, shell=True, check=True)
 
+    # Actually commit the files to the database.
     metadata.pop('content', None)
     metadata.pop('template', None)
     if (output == None):
@@ -95,7 +110,7 @@ def vacuum(filename,output=None,update=None,pin=False):
       else:
         dbops.update_record(update, pdfname, filename, pin=pin)
     else:
-      copyfile(str(filename), str(Path(pdfname).with_suffix('.tex')))
+      copyfile(filename, Path(pdfname).with_suffix('.tex'))
       if (update == None):
         dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False, pin=pin)
       else:

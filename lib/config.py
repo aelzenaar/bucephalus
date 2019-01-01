@@ -16,6 +16,9 @@ def get_recent_file_path():
 def get_pinned_file_path():
   return get_user_data_dir()/"pinned.json"
 
+def get_stencils_search_dirs():
+  return [get_user_data_dir()/"stencils", get_install_dir()/"stencils"]
+
 # Enable the long-form random content on the homepage.
 def enable_long_fortunes():
   return True

@@ -19,7 +19,7 @@ dbname="database.db"
 # but at the same time, the way everything below is implemented (by looping through the entire DB for things like finding all
 # the represented years) is incredibly awful, so this can't be a slowdown compared to that.
 def get_database_object():
-  return TinyDB(Path(directory)/dbname, indent=2)
+  return TinyDB(str(Path(directory)/dbname), indent=2)
 
 def get_recents():
   filename = config.get_recent_file_path()
@@ -94,7 +94,7 @@ def add_file(metadata, overwrite, filename, source = None):
     sys.exit("*** Datestamp directory (" + directory + ") is not a directory.")
 
   # Copy file to location, and sources if needed
-  copyfile(meatpath, datedir / meatpath.name)
+  copyfile(str(meatpath), str(datedir / meatpath.name))
   if not(source == None):
     srcpath = Path(source)
     srcdest = datedir / 'src'
@@ -102,7 +102,7 @@ def add_file(metadata, overwrite, filename, source = None):
       srcdest.mkdir()
     if not(srcdest.is_dir()):
       sys.exit("*** Source directory (" + directory + ") is not a directory.")
-    copyfile(srcpath, srcdest/srcpath.name)
+    copyfile(str(srcpath), str(srcdest/srcpath.name))
 
 # Open an item for reading.
 def open_read(item):

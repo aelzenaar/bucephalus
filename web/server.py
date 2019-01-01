@@ -212,7 +212,7 @@ def v_time(year=None,month=None,day=None,meat=None):
     if not months:
       abort(404)
     for month in months:
-      items.append({'loc': url_for('v_time', year=str(year), month=str(month)),'name':calendar.month_name[int(month)]})
+      items.append({'loc': url_for('v_time', year=str(year), month=str(month)),'name':calendar.month_name[int(month)]},
                            breadcrumbs=[{'loc':url_for('v_time'), 'name': 'By date'},
                                         {'loc':url_for('v_time', year=str(year)),'name': year, 'current':1}], viewernotes=get_fortune())
 

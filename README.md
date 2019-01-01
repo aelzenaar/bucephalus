@@ -104,4 +104,4 @@ the command line. If an author is specified to `bucadd` on the command line, it 
 * [tinydb](https://pypi.org/project/tinydb/)
 * [pystache](https://github.com/defunkt/pystache)
 * [flask](http://flask.pocoo.org/)
-* [python-magic](https://github.com/ahupp/python-magic)
+* [python-magic](https://github.com/ahupp/python-magic) (Warning: this is **not** the same as the module provided by the Debian package `python3-magic`.)
