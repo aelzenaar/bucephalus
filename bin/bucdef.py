@@ -10,7 +10,7 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Bucephalus: Edit Defaults and Configuration')
 group = parser.add_mutually_exclusive_group()
-group.add_argument('-a', metavar='KEY', type=str, nargs=2, help='add a default key with given value')
+group.add_argument('-a', metavar=('KEY','VALUE'), type=str, nargs=2, help='add a default key with given value')
 group.add_argument('-r', metavar='KEY', type=str, help='remove a default key')
 
 args = vars(parser.parse_args())
