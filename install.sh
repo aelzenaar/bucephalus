@@ -7,7 +7,6 @@ mkdir $INSTALLDIR
 cp -R bin $INSTALLDIR
 cp -R web $INSTALLDIR
 cp -R lib $INSTALLDIR
-cp -R prototypes $INSTALLDIR
 cp -R stencils $INSTALLDIR
 
 printf "#!/bin/bash\n FLASK_APP=\"$INSTALLDIR/web/server.py\" PYTHONPATH=\"$PYTHONPATH:$INSTALLDIR/lib\" flask run \"\$@\"\n" > /usr/local/bin/bucserve
@@ -28,4 +27,3 @@ wrapperscript bucmup
 wrapperscript bucrm
 wrapperscript buctask
 wrapperscript bucdef
-wrapperscript bucvac-legacy
