@@ -1,4 +1,4 @@
-{% include texbase.tex %}
+{% include 'texbase.tex' %}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -9,6 +9,6 @@
 \cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
 
 \begin{document}
-{\begin{center}\Large\textbf{ {{{Buc_title}}} }\end{center}}
-{{{content}}}
+{\begin{center}\Large\textbf{ {{Buc_title}} }\end{center}}
+{{content}}
 \end{document}

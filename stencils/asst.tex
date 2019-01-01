@@ -1,7 +1,8 @@
 {% set Buc_title = ((template.course ~ " assignment " ~ template.asstno) | hp2_set_meta("Buc_title")) %}
 
-{% include texbase.tex %}
+{% include 'texbase.tex' %}
 
+{% raw %}
 \usepackage{titlesec}
 \titleformat*{\section}{\color{red}\LARGE\bfseries}
 \titleformat*{\paragraph}{\color{red}\Large\bfseries}

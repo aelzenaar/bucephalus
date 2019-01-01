@@ -90,7 +90,6 @@ def vacuum(filename,output=None,update=None,pin=False):
     env = jinja2.Environment(loader = jinja2.loaders.ChoiceLoader(loaders))
     env.filters['hp2_set_meta'] = functools.partial(filter_hp2_set_meta, metadata)
     template = env.get_template(templatename+".tex")
-    print(metadata)
     rendered = template.render(metadata)
 
     # Compile the rendered file
@@ -131,8 +130,5 @@ parser.add_argument('-u', metavar='UPDATEIDENT', type=int,
 parser.add_argument('-p', help='pin the article', action='store_true', default=False)
 
 args = vars(parser.parse_args())
-
-print(args)
-
 vacuum(Path(args['filename']), args['o'],args['u'],args['p'])
 
