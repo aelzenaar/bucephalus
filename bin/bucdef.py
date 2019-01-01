@@ -18,7 +18,7 @@ args = vars(parser.parse_args())
 filename = config.get_defaults_file_path()
 decoder = json.JSONDecoder()
 if filename.exists():
-  with open(filename) as f:
+  with filename.open() as f:
     defaults = decoder.decode(f.read())
 
 need_write = False
@@ -34,6 +34,6 @@ else:
 
 if need_write:
   encoder = json.JSONEncoder(indent=2)
-  with open(filename, 'w') as f:
+  with filename.open(mode='w') as f:
     f.write(encoder.encode(defaults))
   vcs.commit("Defaults_cmd: change defaults")

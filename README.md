@@ -2,7 +2,10 @@
 
 This repository is only a test. [There is nothing to see here](https://www.youtube.com/watch?v=V2MIvUx9uiQ).
 
-Goal: [futuristic](https://abstrusegoose.com/440) paperless society or something.
+Long-term goal: [futuristic](https://abstrusegoose.com/440) paperless society or something.
+
+Short-tem goal: to establish the feasibility of the long-term goal, in an effort to produce a design for
+software that accomplishes it in a much nicer way than this. Because [who doesn't like a good rewrite from scratch](https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/).
 
 ## IAQ (Infrequently Asked Questions)
 ### Is Bucephalus feature complete?

@@ -29,10 +29,10 @@ def vacuum(filename,output=None,update=None,pin=False):
     decoder = json.JSONDecoder()
     metadata = {'template':{}}
     if defaults.exists():
-      with open(defaults) as f:
+      with defaults.open() as f:
         metadata['template'].update(decoder.decode(f.read()))
 
-    with open(filename) as f:
+    with filename.open() as f:
       inContent = False
       userdef = ""
       content = ""
@@ -76,7 +76,7 @@ def vacuum(filename,output=None,update=None,pin=False):
         print("No template found: " + str(templatepath),file=sys.stderr)
         sys.exit(1)
 
-    with open(templatepath) as f:
+    with templatepath.open() as f:
       templateContent = f.read()
       rendered = pystache.render(templateContent, metadata)
 

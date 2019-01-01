@@ -13,7 +13,7 @@ def tasks():
   if not filename.exists():
     return []
 
-  with open(filename) as f:
+  with filename.open() as f:
     return decoder.decode(f.read())
 
 
@@ -22,7 +22,7 @@ def add(task):
   filename = Path(directory)/"tasks.json"
   encoder = json.JSONEncoder(indent=2)
   tasklist = tasks() + [task] # Need to read before we open for writing.
-  with open(filename, 'w') as f:
+  with filename.open(mode='w') as f:
     f.write(encoder.encode(tasklist))
   vcs.commit("Tasklist: add task")
 
@@ -33,6 +33,6 @@ def rm(taskids):
   taskids = sorted([int(x) for x in taskids], reverse=True)
   for i in taskids:
     tasklist.pop(i)
-  with open(filename, 'w') as f:
+  with filename.open(mode='w') as f:
     f.write(encoder.encode(tasklist))
   vcs.commit("Tasklist: rm task")

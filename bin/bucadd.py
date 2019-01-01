@@ -27,7 +27,7 @@ tags = []
 
 defaults=config.get_defaults_file_path()
 if defaults.exists():
-  with open(defaults) as f:
+  with defaults.open() as f:
     decoder = json.JSONDecoder()
     metadata = decoder.decode(f.read())
     if ('Buc_author' in metadata) and (args['a'] == None):

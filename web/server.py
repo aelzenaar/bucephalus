@@ -168,7 +168,7 @@ def r_file(ident=None,meat=None,src=None):
     filename = dbops.get_single_record_path(ident,meat)
   if(filename == None):
     return abort(404)
-  with open(filename, 'rb') as f:
+  with filename.open(mode='rb') as f:
     data = f.read()
 
   resp = make_response(data)
@@ -213,7 +213,6 @@ def v_time(year=None,month=None,day=None,meat=None):
       abort(404)
     for month in months:
       items.append({'loc': url_for('v_time', year=str(year), month=str(month)),'name':calendar.month_name[int(month)]})
-    return render_template('viewer.html',items=items,view_name='month',
                            breadcrumbs=[{'loc':url_for('v_time'), 'name': 'By date'},
                                         {'loc':url_for('v_time', year=str(year)),'name': year, 'current':1}], viewernotes=get_fortune())
 

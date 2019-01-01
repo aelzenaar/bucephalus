@@ -18,7 +18,7 @@ def list_files():
 
 def search_file_for_string(path, regexp):
   print(path)
-  with open(path, 'rb') as f:
+  with path.open(mode='rb') as f:
     return (True if regexp.search(f.read()) else False)
 
 def search_files_for_string(s, case):

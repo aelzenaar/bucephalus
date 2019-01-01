@@ -27,7 +27,7 @@ def get_recents():
   if not filename.exists():
     return []
 
-  with open(filename) as f:
+  with filename.open() as f:
     ids = decoder.decode(f.read())
 
   return ids
@@ -37,7 +37,7 @@ def set_recent(recents):
   if not filename.exists():
     filename.touch()
   encoder = json.JSONEncoder(indent=2)
-  with open(filename, 'w') as f:
+  with filename.open(mode='w') as f:
     f.write(encoder.encode(recents))
 
 def add_recent(dbid):
@@ -106,7 +106,7 @@ def add_file(metadata, overwrite, filename, source = None):
 
 # Open an item for reading.
 def open_read(item):
-  return open(dd / str(item['ts_year']) / str(item['ts_month']) / str(item['ts_day']) / str(item['Buc_name']), 'rb')
+  return (dd / str(item['ts_year']) / str(item['ts_month']) / str(item['ts_day']) / str(item['Buc_name'])).open(mode='rb')
 
 # Update an existing record.
 def update_record(ident, meat, source=None, pin=False):
@@ -285,7 +285,7 @@ def get_pinned():
   if not filename.exists():
     return None
 
-  with open(filename) as f:
+  with filename.open() as f:
     ident = decoder.decode(f.read())['pinned']
 
   return ident
@@ -298,5 +298,5 @@ def set_pinned(ident):
   if not filename.exists():
     filename.touch()
   encoder = json.JSONEncoder(indent=2)
-  with open(filename, 'w') as f:
+  with filename.open(mode='w') as f:
     f.write(encoder.encode({'pinned': ident}))
