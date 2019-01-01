@@ -1,0 +1,14 @@
+{% include texbase.tex %}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{ {{ts_year}}/{{ts_month}}/{{ts_day}} }
+\chead{ {{Buc_name}} }
+\rhead{ {{Buc_author}} }
+
+\cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+
+\begin{document}
+{\begin{center}\Large\textbf{ {{{Buc_title}}} }\end{center}}
+{{{content}}}
+\end{document}
