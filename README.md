@@ -47,13 +47,57 @@ add the given task string to the end, or remove the given items from the list.
 Some of these commands will check that you put sane values in. Some of them won't. Finding out which is which is a fun little game
 you can play if you don't care about your data. *If these commands go wrong, they may trample your database.*
 
-**Old behaviour.** ~~If you add two files with the same name on the same day, the later one will overwrite the earlier one and will take the same ID. This is
-by design, so that you don't end up with several slightly different copies of the same file.~~
+### Configuration
+Some configuration settings can be found in [config.py](lib/config.py); for example, you can disable the random StackExchange q+a feature
+by changing `config.enable_long_fortunes()` to return `False`.
 
-**New behaviour.** Adding a file with the same name as an existing file on the same day will now error out *at the database level* (there is a new `overwrite` flag
+
+### `bucvac` and `bucadd` behaviour
+What is the difference? `bucadd` will add files vertabim, and `bucvac` will pass LaTeX files through a templating system and add both
+the source and PDF files.
+
+#### Adding files
+Adding a file with the same name as an existing file on the same day will now error out *at the database level* (there is a new `overwrite` flag
 that needs to be passed to `dbops.add_file` which is passed by `add_record` as false and `update_record` as true). You can use `bucvac -u UPDATEIDENT` (if you
 have a vacuumed TeX file to update) or `bucfup` (if you are adding a real file of some sort) to overwrite files and set the modification date. Adding files of
 the same name on different days adds new files, as before.
+
+#### Default key values
+If the file `defaults.json` exists in the top level of your user data directory, then the JSON tags inside it will be added to the metadata
+available to `bucvac` and `bucadd`. For example, if you save the following example as your defaults file, then the author field will be automatically
+set to Aeneas when vacuuming up a TeX file or using `bucadd` on any other file.
+
+```javascript
+{'Buc_author':'Aeneas', 'random_data_field':'this is data'}
+```
+
+When using `bucvac`, every field you add will be available inside both templates and the TeX files themselves: you can access the `random_data_field` from
+the above example using the `{{template.random_data_field}}` template command.
+
+The `bucdef` command can be used to modify `defaults.json` from the command line.
+
+Note: `bucadd` will only read `Buc_author` and `Buc_tags` from the defaults file. It will append the tags specified in defaults to those on
+the command line. If an author is specified to `bucadd` on the command line, it will take priority over that in the defaults. When using
+`bucvac`, the fields inside the TeX file will overwrite those in defaults if there is a conflict.
+
+#### Stencils
+LaTeX files passed into `bucvac` need to be formatted as metadata dict and content sections, seperated by a line solely consisting
+of the characters `===`. Examples can be seen in the [test/](test/) subdirectory. The key `Hp2_version` **must** be set to 2 (the integer,
+not the string).
+
+Each such file has to be associated with a stencil file by setting the key `Hp2_stencil`. This is a [jinja2](http://jinja.pocoo.org/) template which is passed the
+metadata of the file to be added, the user-provided data in the metadata dict section of the TeX file, and the content section of this file.
+See the [stencils/](stencils/) subdirectory for some examples. Stencils are, by default, searched for in `<install dir>/stencils`
+and `<user data dir>/stencils`, in that order. The directories to be searched can be configured by editing `config.get_stencils_search_dirs()`.
+
+As of commit 88336b689fd73220c4ae76d136548755a95a6b96 (1 Jan 2019, see issue #3), there have been non-backward-compatible changes to `bucvac`. From
+a practical standpoint, **at least** the following changes need to be made:
+
+  * In TeX files to be processed, the addition of the version key `Hp2_version` and the renaming of `Buc_hp` to `Hp2_stencil`.
+  * Template files need to be moved to `stencils/` (if they live in the default `prototypes/` directories).
+
+In addition, the new templating engine ([jinja2](http://jinja.pocoo.org/)) has a slightly different syntax to the previous
+engine ([pystache](https://github.com/defunkt/pystache)) which may require some minor changes to be made to templates.
 
 ### Todo list
 There are two options for using the todo list: the `buctask` command line utility, or the web interface. The command line interface allows all
@@ -75,33 +119,10 @@ commiting whenever a file is added or removed, or the task list changes. The fun
 to return `False` in `config.py`; all the VCS functionality is kept inside [vcs.py](lib/vcs.py), and so it should be relatively easy to
 swap Git out for hg and/or svn and/or sccs (if you are still living that far in the past).
 
-## Configuration
-Some configuration settings can be found in [config.py](lib/config.py); for example, you can disable the random StackExchange q+a feature
-by changing `config.enable_long_fortunes()` to return `False`.
-
-If the file `defaults.json` exists in the top level of your user data directory, then the JSON tags inside it will be added to the metadata
-available to `bucvac` and `bucadd`. For example, if you save the following example as your defaults file, then the author field will be automatically
-set to Aeneas when vacuuming up a TeX file or using `bucadd` on any other file.
-
-```javascript
-{'Buc_author':'Aeneas', 'random_data_field':'this is data'}
-```
-
-When using `bucvac`, every field you add will be available inside both templates and the TeX files themselves: you can access the `random_data_field` from
-the above example using the `{{template.random_data_field}}` template command.
-
-**New feature**: the `bucdef` command can be used to modify `defaults.json` from the command line.
-
-Note: `bucadd` will only read `Buc_author` and `Buc_tags` from the defaults file. It will append the tags specified in defaults to those on
-the command line. If an author is specified to `bucadd` on the command line, it will take priority over that in the defaults. When using
-`bucvac`, the fields inside the TeX file will overwrite those in defaults if there is a conflict.
-
-
 ## Plan
 [Project board](https://github.com/aelzenaar/bucephalus/projects/1)
 
 ## Dependencies
 * [tinydb](https://pypi.org/project/tinydb/)
-* [pystache](https://github.com/defunkt/pystache)
-* [flask](http://flask.pocoo.org/)
+* [flask](http://flask.pocoo.org/) and [jinja2](http://jinja.pocoo.org/)
 * [python-magic](https://github.com/ahupp/python-magic) (Warning: this is **not** the same as the module provided by the Debian package `python3-magic`.)
