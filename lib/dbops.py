@@ -36,6 +36,14 @@ class UpdateMissingFile(BucephalusException):
   def __str__(self):
     return self.message
 
+# Raised when keys in a metadata dict passed into a function don't match other parameters which they should.
+class MetadataMismatch(BucephalusException):
+  def __init__(self, detail):
+    self.message = "Data passed into the function didn't match existing metadata: " + str(detail)
+
+  def __str__(self):
+    return self.message
+
 directory=config.get_user_data_dir()
 dbname="database.db"
 
@@ -127,6 +135,7 @@ def add_file(metadata, overwrite, filename, source = None):
       srcdest.mkdir()
     if not(srcdest.is_dir()):
       raise NotADirectoryError(errno.ENOTDIR, os.strerror(errno.ENOTDIR), str(srcdest))
+    print("Copying source: " + str(srcpath) + " to " + str(srcdest/srcpath.name))
     copyfile(str(srcpath), str(srcdest/srcpath.name))
 
 # Open an item for reading.
@@ -171,6 +180,12 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
     if not(source == None):
       srcpath = Path(source)
       metadata['Buc_source'] = srcpath.name
+  else:
+    if not (source == None):
+      srcpath = Path(source)
+      if str(srcpath) != metadata['Buc_source']:
+        raise MetadataMismatch('Buc_source=\'' + metadata['Buc_source'] + '\' key of metadata does not match source=\'' + str(srcpath) + '\' parameter')
+
   if delay == True:
     return metadata
 
