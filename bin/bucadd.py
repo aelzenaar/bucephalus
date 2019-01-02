@@ -41,5 +41,5 @@ for tag in args['tags']:
   if not(tag in tags):
     tags.append(tag)
 
-if dbops.add_record(title, author, tags, filename, pin=pin) == None:
-  print("*** Error: failed to add record.")
+metadata = dbops.add_record(title, author, tags, filename, pin=pin)
+print("*** Added/updated article has database ID " + str(metadata['doc_id']))

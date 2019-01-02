@@ -105,16 +105,20 @@ def vacuum(filename,output=None,update=None,pin=False):
     metadata.pop('template', None)
     if (output == None):
       if (update == None):
-        dbops.add_record(title, author, tags, pdfname, filename, metadata, False, pin=pin)
+        dbid = dbops.add_record(title, author, tags, pdfname, filename, metadata, False, pin=pin)['doc_id']
       else:
         dbops.update_record(update, pdfname, filename, pin=pin)
+        dbid = update
     else:
       copyfile(filename, Path(pdfname).with_suffix('.tex'))
       if (update == None):
-        dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False, pin=pin)
+        dbid = dbops.add_record(title, author, tags, pdfname, Path(pdfname).with_suffix('.tex'), metadata, False, pin=pin)['doc_id']
       else:
         dbops.update_record(update, pdfname, Path(pdfname).with_suffix('.tex'), pin=pin)
+        dbid = update
       Path(pdfname).with_suffix('.tex').unlink()
+
+    print("*** Added/updated article has database ID " + str(dbid))
   except:
     if(warned):
       print("*** Note: Something failed. Bucephalus printed a warning earlier that might help.")

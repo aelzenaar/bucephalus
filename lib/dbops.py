@@ -179,6 +179,8 @@ def add_record(title, author, tags, meat, source=None, metadata=None, delay=Fals
   if pin:
     set_pinned(dbid)
 
+  metadata['doc_id'] = dbid
+
   vcs.commit("dbops: add new record")
   return metadata
 
