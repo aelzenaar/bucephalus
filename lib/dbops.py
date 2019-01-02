@@ -282,7 +282,7 @@ def remove_record_by_id(ident):
   db = get_database_object()
   item = db.table('files').get(doc_id=int(ident))
   if item == None:
-    return None
+    raise UpdateMissingFile(ident)
 
   filepath = get_single_record_path(ident, item['Buc_name'])
   if 'Buc_source' in item:
