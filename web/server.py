@@ -78,13 +78,13 @@ def get_randomse():
                                 {'qid':4351, 'site':"matheducators.stackexchange.com"}, {'qid':1817, 'site':"matheducators.stackexchange.com"},
                               ])
     question = requests.get('https://api.stackexchange.com/questions/' + str(questionid['qid']) + '?site=' + str(questionid['site']) +
-                            '&filter=!gB66oJbwvcXSH(Ni5Ti9FQ4PaxMw.WKlBWC')
+                            '&filter=!gB66oJbwvcXSH(Ni5Ti9FQ4PaxMw.WKlBWC', timeout=config.external_request_timeout())
     question.raise_for_status()
     question = question.json()['items'][0]
     ansid = random.choice(question['answers'])['answer_id']
 
     fullrequest = requests.get('https://api.stackexchange.com/answers/' + str(ansid) + '?site=' + str(questionid['site']) +
-                              '&filter=!Fcb(61J.xH8s_mAfP-LmG*7fPe')
+                              '&filter=!Fcb(61J.xH8s_mAfP-LmG*7fPe', timeout=config.external_request_timeout())
     fullrequest.raise_for_status()
     fullrequest = fullrequest.json()
     answer = fullrequest['items'][0]
@@ -92,6 +92,10 @@ def get_randomse():
     randomse = {'qtitle': unescape(question['title']), 'qbody': question['body'], 'qlink': question['link'],
                 'abody': answer['body'], 'alink': answer['link'], 'ascore': answer['score'], 'quota': fullrequest['quota_remaining'] }
     return randomse
+  except requests.Timeout as ex:
+    print(ex)
+    print('*** Note: get_randomse() timed out.')
+    return None
   except Exception as ex:
     randomse = {'qtitle': 'Exception occurred', 'qbody': str(ex), 'qlink': 'https://xkcd.com/1084/',
                 'abody': '<img src="https://imgs.xkcd.com/comics/error_code.png"/>', 'alink': 'https://xkcd.com/1024/', 'ascore': '', 'quota': '' }

@@ -46,3 +46,7 @@ def enable_ggb_integration():
 # Enable VCS commits on all database changes
 def enable_vcs_commits():
   return True
+
+# Timeout (in seconds) for web requests
+def external_request_timeout():
+  return 0.1
