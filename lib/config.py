@@ -49,4 +49,4 @@ def enable_vcs_commits():
 
 # Timeout (in seconds) for web requests
 def external_request_timeout():
-  return 0.1
+  return 1
