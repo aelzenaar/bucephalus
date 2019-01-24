@@ -1,5 +1,14 @@
 # bucephalus
 
+![Generic sad image](sherlock.jpg "Goodbye for now")
+
+:cry: :disappointed: :sob: Bucephalus was always an experiment, and it has now (for me) outlived its usefulness. As such, it will no longer be *actively*
+updated or maintained. If you're interested, [here's what I learned from writing Bucephalus](lessons.md).
+
+The readme is still available below, and there's no reason updates will cease entirely; who knows, I might be back.
+
+---
+
 :warning: **If you used `bucvac` prior to 2019, you should read the documentation below on stencils as there have been non-backward-compatible changes.**  :warning:
 
 This repository is only a test. [There is nothing to see here](https://www.youtube.com/watch?v=V2MIvUx9uiQ).
