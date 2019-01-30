@@ -1,5 +1,9 @@
 from pathlib import Path
 
+#
+# Directories and files
+#
+
 # Directory for user-specific data (e.g. the database)
 def get_user_data_dir():
   return Path.home()/"bucephalus2"
@@ -32,6 +36,11 @@ def get_pinned_file_path():
 def get_stencils_search_dirs():
   return [get_user_data_dir()/"stencils", get_install_dir()/"stencils"]
 
+
+#
+# Features
+#
+
 # Enable the long-form random content on the homepage.
 def enable_long_fortunes():
   return True
@@ -55,6 +64,18 @@ def enable_ggb_integration():
 def enable_vcs_commits():
   return True
 
+#
+# Other configuration options
+#
+
 # Timeout (in seconds) for web requests
 def external_request_timeout():
   return 1
+
+# Formats for storing timestamps:
+# Short format - needs to be re-readable by a strptime-like machine.
+def timestamp_format():
+  return "%Y/%m/%d @ %H:%M:%S"
+# Long format - guaranteed only ever to be used by humans.
+def timestamp_format_long():
+  return "%d %B %Y @ %H:%M:%S"

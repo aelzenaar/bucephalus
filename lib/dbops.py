@@ -1,8 +1,10 @@
 """ This module contains the database access functions for bucephawiki. """
 
 # Standard library
+from datetime import datetime
 from enum import Enum
 import magic
+import os
 import re
 
 # Libraries
@@ -38,16 +40,29 @@ class TooManyMetadataError(BucephalusException):
         self.docids = docids
 
 
+class MetadataMismatchError(BucephalusException):
+    """ A path and its associated metadata don't match in some way. """
+    def __init__(self, path, metadata, msg=None):
+        if msg is None:
+            # Set some default useful error message
+            msg = "Mismatched metadata for: " + str(path) + "\nMetadata:" + str(metadata)
+        super(MetadataMismatchError, self).__init__(msg)
+        self.path = path
+        self.metadata = metadata
+
+
 def get_database_object():
     """ Open the correct TinyDB. """
 
     return TinyDB(config.get_metadata_file_path(), indent=2)
 
 
-def read_path_metadata(path):
+def read_path_metadata(path, db=None):
     """ Return the metadata associated with our path as a dict. """
 
-    db = get_database_object()
+    if db == None:
+        db = get_database_object()
+
     entries = db.search(where('path') == path)
     if len(entries) < 1:
         raise NoMetadataError(path)
@@ -62,23 +77,23 @@ def read_path_metadata(path):
 # These functions decide whether things are valid or exist.
 #
 
-class InvalidPagePathError(BucephalusException):
+class InvalidPathError(BucephalusException):
     """ An invalid (i.e. non-conforming formtat) page path was chucked our way by someone nasty. """
     def __init__(self, path, msg=None):
         if msg is None:
             # Set some default useful error message
             msg = "Invalid page path: " + str(path)
-        super(InvalidPagePathError, self).__init__(msg)
+        super(InvalidPathError, self).__init__(msg)
         self.path = path
 
 
-class NonexistentPagePathError(BucephalusException):
+class NonexistentPathError(BucephalusException):
     """ A non-existent (i.e. may be valid but does not physically exist) page path was chucked our way by someone nasty. """
     def __init__(self, path, msg=None):
         if msg is None:
             # Set some default useful error message
             msg = "Non-existent page path: " + str(path)
-        super(NonexistentPagePathError, self).__init__(msg)
+        super(NonexistentPathError, self).__init__(msg)
         self.path = path
 
 
@@ -95,7 +110,7 @@ def path_exists(path):
     """ Actually check whether the given path exists in the database. """
 
     if not valid_page_path(path):
-        raise InvalidPagePathError(path)
+        raise InvalidPathError(path)
 
     return path_internal(path).exists()
 
@@ -143,6 +158,15 @@ class FileIsDirectoryError(BucephalusException):
         super(FileIsDirectoryError, self).__init__(msg)
         self.path = path
 
+class FileNotDirectoryError(BucephalusException):
+    """ Expected a directory, but didn't get one. """
+    def __init__(self, path, msg=None):
+        if msg is None:
+            # Set some default useful error message
+            msg = "Not a directory: " + str(path)
+        super(FileNotDirectoryError, self).__init__(msg)
+        self.path = path
+
 
 def read_path_content(path):
     """ Return the full contents of the given non-directory path as a byte-string (for blobs) or utf-string (for text). """
@@ -157,3 +181,69 @@ def read_path_content(path):
 
     with path_internal(path).open(o) as f:
       return f.read()
+
+def write_path_text(path, content, metadata):
+    """ Overwrite (or create) the given path with new content. Textual content only. """
+
+    if path_type(path) == PathType.DIRECTORY:
+        raise FileIsDirectoryError(path)
+
+    # Make the parent directories of this new path exist in a hacky way.
+    if not path_exists(path):
+        real_path = path_internal(path)
+        real_path.mkdir(parents = True)
+        real_path.rmdir()
+
+    # TODO: decide whether we throw an error here, or whether we silently replace metadata["path"] with path.
+    if metadata["path"] != path:
+        raise MetadataMismatchError(path, metadata)
+
+    metadata["timestamp_modify"] = datetime.utcnow().strftime(config.timestamp_format())
+
+    # If we have already got some metadata on this page, bring across any of the old
+    # tags we need to and then update the old metadata.
+    db = get_database_object()
+    try:
+        old_metadata = read_path_metadata(path, db=db)
+        metadata["timestamp_create"] = old_metadata["timestamp_create"]
+        db.update(metadata, doc_ids=[old_metadata.doc_id])
+
+    except NoMetadataError:
+        metadata["timestamp_create"] = metadata["timestamp_modify"]
+        dbid = db.insert(metadata)
+
+    # Write file after metadata.
+    with path_internal(path).open('w') as f:
+        f.write(text)
+
+    vcs.commit("dbops: write_path_text: " + str(path))
+
+
+def delete_path(path):
+    """ Delete the path from the database. If the path represents a directory, that directory must be empty. """
+
+    if not path_exists(path):
+        raise NonexistentPathError(path)
+
+    if path_type(path) == PathType.directory():
+        path_internal().rmdir()
+    else:
+        path_internal().unlink()
+
+    db = get_database_object()
+    db.remove(doc_ids=[read_path_metadata(path, db=db).doc_id])
+
+    vcs.commit("dbops: delete_path(): " + str(path))
+
+def rename_path(path, destination):
+    """ Move the data at the given path to the destination. """
+
+    raise UnimplementedError("Please just copy the file data manually and then delete the old thingy.")
+
+def directory_contents(path):
+    """ Return a list containing the items in the directory. """
+
+    if path_type(path) != PathType.directory():
+        raise FileNotDirectoryError(path)
+
+    return os.listdir(str(path))

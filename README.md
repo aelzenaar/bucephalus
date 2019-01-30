@@ -16,10 +16,10 @@ The bucephalus readme is hidden below, but there is [still nothing to see there]
       * Check if file `editable' (i.e. text/ mimetype). [Changed: get file type.], [X]
       * Read file as bytestream. [X]
       * Read metadata as dict. [X]
-      * Write file as bytestream, with metadata.
-      * Delete file.
-      * Rename file.
-      * Read contents of directory.
+      * Write file as bytestream, with metadata. [X]
+      * Delete file. [X]
+      * Rename file. [later]
+      * Read contents of directory.[X]
 * New views.
   * /v/page/path/to/file/name
   * /v/edit/path/to/file/name
