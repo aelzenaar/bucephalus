@@ -1,13 +1,39 @@
-# bucephalus
+# bucephawiki
 
-![Generic sad image](sherlock.jpg "Goodbye for now")
+It's [:horse: bucephalus :horse:](https://github.com/aelzenaar/bucephalus), but better!
 
-:cry: :disappointed: :sob: Bucephalus was always an experiment, and it has now (for me) outlived its usefulness. As such, it will no longer be *actively*
-updated or maintained. If you're interested, [here's what I learned from writing Bucephalus](lessons.md).
+In this repo, I will apply [what I learned from writing Bucephalus](lessons.md).
 
-The readme is still available below, and there's no reason updates will cease entirely; who knows, I might be back.
+The bucephalus readme is hidden below, but there is [still nothing to see there](https://www.youtube.com/watch?v=Rz3LTvpGKPY).
+
+
+## What needs to be done
+
+* New database access functions.
+  * Database is to use TinyDB for metadata, and flat files for actual data.
+  * Need the following exported:
+      * Check if file exists.
+      * Check if file `editable' (i.e. text/ mimetype).
+      * Read file as bytestream.
+      * Read metadata as dict.
+      * Write file as bytestream, with metadata.
+      * Delete file.
+      * Rename file.
+      * Read contents of directory.
+* New views.
+  * /v/page/path/to/file/name
+  * /v/edit/path/to/file/name
+  * /v/pdf/path/to/file/name
+  * /v/category/CatName
+  * /v/chain/ChainName/1,2,...
+  * /v/search/?q=blah&t=searchtype
+* Users and change management.
+  * /v/page/path/to/filename?r=revno
+  * /v/history/path/to/filename
 
 ---
+
+# bucephalus
 
 :warning: **If you used `bucvac` prior to 2019, you should read the documentation below on stencils as there have been non-backward-compatible changes.**  :warning:
 
