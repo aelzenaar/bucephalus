@@ -2,11 +2,19 @@ from pathlib import Path
 
 # Directory for user-specific data (e.g. the database)
 def get_user_data_dir():
-  return Path.home()/"bucephalus"
+  return Path.home()/"bucephalus2"
 
 # Directory for library files, default stencils for bucvac, and so forth
 def get_install_dir():
   return Path(__file__).parent.parent
+
+# Directory where the actual user-given files are kept.
+def get_wiki_dir():
+  return get_user_data_dir()/"files"
+
+# File holding metadata on our pages.
+def get_metadata_file_path():
+  return get_user_data_dir()/"metadata.json"
 
 # File holding default keys used by bucadd and bucvac; edited by bucdef
 def get_defaults_file_path():

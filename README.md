@@ -12,10 +12,10 @@ The bucephalus readme is hidden below, but there is [still nothing to see there]
 * New database access functions.
   * Database is to use TinyDB for metadata, and flat files for actual data.
   * Need the following exported:
-      * Check if file exists.
-      * Check if file `editable' (i.e. text/ mimetype).
-      * Read file as bytestream.
-      * Read metadata as dict.
+      * Check if file exists. [X]
+      * Check if file `editable' (i.e. text/ mimetype). [Changed: get file type.], [X]
+      * Read file as bytestream. [X]
+      * Read metadata as dict. [X]
       * Write file as bytestream, with metadata.
       * Delete file.
       * Rename file.
@@ -27,6 +27,9 @@ The bucephalus readme is hidden below, but there is [still nothing to see there]
   * /v/category/CatName
   * /v/chain/ChainName/1,2,...
   * /v/search/?q=blah&t=searchtype
+* Pinned.
+* Recent.
+  * /v/recent - list of five.
 * Users and change management.
   * /v/page/path/to/filename?r=revno
   * /v/history/path/to/filename
