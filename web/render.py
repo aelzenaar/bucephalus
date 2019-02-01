@@ -1,7 +1,9 @@
 """ This module contains the web rendering functions for bucephawiki. """
 
 # Standard library
-from pathlib import PurePosixPath
+from datetime import datetime, timezone
+from pathlib import PurePosixPath, Path
+import tempfile
 
 # Libraries
 import markdown2
@@ -14,6 +16,18 @@ import dbops
 from exceptions import *
 import fortunes
 import tasklist
+
+def breadcrumbs_from_path(path):
+  breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
+  nice_path = PurePosixPath(path[1:]) # Make it so we can do pathy things.
+  for part in nice_path.parts:
+    last = breadcrumbs[-1]['loc']
+    if last.endswith('/'):
+      last = last[:-1]
+    breadcrumbs.append({'loc': last + '/' + part, 'name': part})
+  breadcrumbs[-1]['current'] = 1
+
+  return breadcrumbs
 
 def human_readable_tags(tags):
   tags = ['\"{0}\"'.format(tag) for tag in tags]
@@ -31,16 +45,11 @@ def render_directory(path):
     raise FileNotDirectoryError(path)
 
   items = []
-  pages = dbops.directory_contents()
+  pages = dbops.directory_contents(path)
   for page in pages:
-    items.append({'loc': url_for('v_page', path = path + "/"+str(page), name = str(page) )})
+    items.append({'loc': url_for('v_page', path = path[1:] + "/"+str(page)), 'name': str(page)})
 
-  breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
-  nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts:
-    last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
-  breadcrumbs[-1]['current'] = 1
+  breadcrumbs=breadcrumbs_from_path(path)
 
   return render_template('viewer.html',items=items,view_name='directory', breadcrumbs=breadcrumbs, viewernotes=fortunes.short_fortune())
 
@@ -54,17 +63,12 @@ def render_wiki(path):
                             link_patterns=[(dbops.valid_path_re, url_for('v_page',path='\\1'))])
 
 
-  breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
-  nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts:
-    last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
-  breadcrumbs[-1]['current'] = 1
+  breadcrumbs = breadcrumbs_from_path(path)
 
   metadata = dbops.read_path_metadata(path)
 
   return render_template('article.html',
-                         article_name=nice_path.name,
+                         article_name=PurePosixPath(path).name,
                          article_timestamp=metadata['timestamp_create'],
                          article_author=metadata['author'],
                          tags=human_readable_tags(metadata['tags']),
@@ -84,11 +88,8 @@ def render_edit(path, isnew):
   else:
     text = dbops.read_path_content(path)
 
-  breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
-  nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts:
-    last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
+  breadcrumbs = breadcrumbs_from_path(path)
+  breadcrumbs[-1].pop('current',None)
   breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name': '(edit)', 'current': 1})
 
   if isnew:
@@ -99,7 +100,7 @@ def render_edit(path, isnew):
   mdtext = frontmatter.dumps(frontmatter.Post(text,**metadata))
 
   return render_template('editor.html',
-                         article_name=nice_path.name,
+                         article_name=PurePosixPath(path).name,
                          article_timestamp=metadata['timestamp_create'],
                          article_author=metadata['author'],
                          tags=human_readable_tags(metadata['tags']),
@@ -125,7 +126,7 @@ def render_pdf(path):
 
   filename = tempfile.mkstemp('.pdf')[1]
   try:
-    pypandoc.convert_text("# " + path + "\nRetrieved " + datetime.datetime.now(datetime.timezone.utc).strftime("%d %B %Y (%Z) @ %H:%M:%S")
+    pypandoc.convert_text("# " + path + "\nRetrieved " + datetime.now(timezone.utc).strftime("%d %B %Y (%Z) @ %H:%M:%S")
                               + "\n\n---\n" + dbops.read_path_content(path), 'pdf', format='md', outputfile=filename)
     with open(filename, 'rb') as f:
       data = f.read()
@@ -161,17 +162,12 @@ def render_geogebra(path):
                             link_patterns=[(valid_path_re, url_for('v_page',path='\\1'))])
 
 
-  breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
-  nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts:
-    last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
-  breadcrumbs[-1]['current'] = 1
+  breadcrumbs = breadcrumbs_from_path(path)
 
   metadata = dbops.read_path_metadata(path)
 
   return render_template('ggbframe.html',
-                         article_name=nice_path.name,
+                         article_name=PurePosixPath(path).name,
                          article_timestamp=metadata['timestamp_create'],
                          article_author=metadata['author'],
                          tags=human_readable_tags(metadata['tags']),

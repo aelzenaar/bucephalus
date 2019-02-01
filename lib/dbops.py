@@ -48,7 +48,7 @@ def read_path_metadata(path, db=None):
 #
 
 # Compile our regular expression first, so we don't do it every time we need it.
-valid_path_re = re.compile(r"((?:\/\w+)+\b)")
+valid_path_re = re.compile(r"((\/\w+)+\b)")
 
 
 def valid_path(path):
@@ -67,11 +67,7 @@ def path_exists(path):
 
 def path_internal(path):
     """ Take a path and give us where it is, physically. """
-    print("----")
-    print(config.get_wiki_dir())
-    print(path[1:])
-    print(config.get_wiki_dir() / path[1:])
-    print("----")
+
     return config.get_wiki_dir() / path[1:]
 
 
@@ -163,7 +159,7 @@ def delete_path(path):
     if not path_exists(path):
         raise NonexistentPathError(path)
 
-    if path_type(path) == PathType.directory():
+    if path_type(path) == PathType.DIRECTORY:
         path_internal().rmdir()
     else:
         path_internal().unlink()
@@ -181,7 +177,9 @@ def rename_path(path, destination):
 def directory_contents(path):
     """ Return a list containing the items in the directory. """
 
-    if path_type(path) != PathType.directory():
+    if path_type(path) != PathType.DIRECTORY:
         raise FileNotDirectoryError(path)
 
-    return os.listdir(str(path))
+    print(str(path_internal(path)))
+    print(os.listdir(str(path_internal(path))))
+    return os.listdir(str(path_internal(path)))
