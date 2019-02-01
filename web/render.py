@@ -50,7 +50,7 @@ def render_wiki(path):
 
   text = markdown2.markdown(dbops.read_path_content(path),
                             extras=["link-patterns", "fenced-code-blocks"],
-                            link_patterns=[(valid_path_re, url_for('v_page',path='\\1'))])
+                            link_patterns=[(dbops.valid_path_re, url_for('v_page',path='\\1'))])
 
 
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
@@ -91,7 +91,7 @@ def render_edit(path, isnew):
   breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name': '(edit)', 'current': 1})
 
   if isnew:
-    metadata = {'timestamp_create': "to be set upon commit", 'author':'', 'tags': []}
+    metadata = {'path': path, 'timestamp_create': '"to be set upon commit"', 'author':'', 'tags': []}
   else:
     metadata = dbops.read_path_metadata(path)
 
@@ -108,8 +108,8 @@ def render_edit(path, isnew):
                          viewernotes=fortunes.short_fortune(),
                          html_text=mdtext)
 
-def write_wiki(page, yamltext):
-  if dbops.path_type(path) != dbops.PathType.TEXT:
+def write_wiki(path, yamltext):
+  if dbops.path_exists(path) and dbops.path_type(path) != dbops.PathType.TEXT:
     raise WrongPathTypeError(path)
 
   post = frontmatter.loads(yamltext)

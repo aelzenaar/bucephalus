@@ -46,10 +46,10 @@ def v_page(path=''):
     abort(400)
 
   if request.method == 'POST':
-    if not dbops.path_type(path) == dbops.PathType.TEXT:
+    if dbops.path_exists(path) and dbops.path_type(path) != dbops.PathType.TEXT:
       abort(405)
 
-    render.write_wiki(path, request.form['newtext'])
+    write_wiki(path, request.form['newtext'])
 
   if not dbops.path_exists(path) and request.args.get('new', 0, type=int) == 0:
     return redirect(url_for('v_page', path=path[1:], edit=1, new=1))

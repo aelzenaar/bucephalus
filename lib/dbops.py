@@ -5,6 +5,7 @@ from datetime import datetime
 from enum import Enum
 import magic
 import os
+from pathlib import Path
 import re
 
 # Libraries
@@ -13,6 +14,7 @@ from tinydb import TinyDB, where
 # Bucephalus imports
 import config
 from exceptions import *
+import vcs
 
 
 #
@@ -22,7 +24,7 @@ from exceptions import *
 def get_database_object():
     """ Open the correct TinyDB. """
 
-    return TinyDB(config.get_metadata_file_path(), indent=2)
+    return TinyDB(str(config.get_metadata_file_path()), indent=2)
 
 
 def read_path_metadata(path, db=None):
@@ -65,7 +67,12 @@ def path_exists(path):
 
 def path_internal(path):
     """ Take a path and give us where it is, physically. """
-    return config.get_wiki_dir() / path
+    print("----")
+    print(config.get_wiki_dir())
+    print(path[1:])
+    print(config.get_wiki_dir() / path[1:])
+    print("----")
+    return config.get_wiki_dir() / path[1:]
 
 
 class PathType(Enum):
@@ -120,6 +127,8 @@ def write_path_text(path, content, metadata):
     # Make the parent directories of this new path exist in a hacky way.
     if not path_exists(path):
         real_path = path_internal(path)
+        print(real_path)
+        print(path_internal(path))
         real_path.mkdir(parents = True)
         real_path.rmdir()
 
@@ -143,7 +152,7 @@ def write_path_text(path, content, metadata):
 
     # Write file after metadata.
     with path_internal(path).open('w') as f:
-        f.write(text)
+        f.write(content)
 
     vcs.commit("dbops: write_path_text: " + str(path))
 
