@@ -1,0 +1,22 @@
+{%extends "base.html" %}
+{% set page_title = "Editing article " ~ article_name %}
+{% set nologo = 1 %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<a href="{{abort_url}}">Abort Edit: Back to {{article_name}}</a>
+<form method="post" action="{{post_url}}">
+  <textarea id="newtext" name="newtext" cols="80" rows="24" wrap="virtual">{html_text}</textarea><br>
+  <input type="submit" value="Save Changes">
+</form>
+<script>
+  var simplemde = new SimpleMDE({{ element: document.getElementById("newtext") }});
+</script>
+
+{% endblock %}

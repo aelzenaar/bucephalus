@@ -13,15 +13,14 @@
   <tbody>
     <tr><th>Filename:</th><td>{{article_name}}</td>
         <th>Author:</th><td>{{article_author}}</td></tr>
-    <tr><th>Title:</th><td>{{article_title}}</td>
-        <th>Unique ID:</th><td>{{article_id}}</td></tr>
     <tr><th>Tags:</th><td colspan="3">{% for tag in tags -%}<a href="{{tag.loc}}">{{tag.name|safe}}</a>&nbsp; {%- endfor %}</td></tr>
     <tr><th>Created:</th><td>{{article_timestamp}}</td>
     {%if article_modded is not none %}<th style='text-align:right;'>Modified:</th><td>{{article_modded}}</td>{% endif %}</tr>
-    <tr><th>Raw file:</th><td><a href="{{article_raw}}">Download</a></td>
-    {%if article_src is not none%}<th>Source:</th><td><a href="{{article_src}}">Download</a></td>{% endif %}</tr>
+    <tr><th>Edit file:</th><td><a href="{{article_edit}}">Edit</a></td>
+        <th>As PDF:</th><td><a href="{{article_pdf}}">PDF</a></td></tr>
   </tbody>
 </table>
-<button onclick="document.getElementById('viewerWindow').src = document.getElementById('viewerWindow').src">Refresh</button>
-<div><iframe id="viewerWindow" src="{{article_raw}}" style="width:75vw; height: 100vh"></iframe></div>
+
+{{html_text|safe}}
+
 {% endblock %}

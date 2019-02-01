@@ -21,15 +21,14 @@ The bucephalus readme is hidden below, but there is [still nothing to see there]
       * Rename file. [later]
       * Read contents of directory.[X]
 * New views.
-  * /v/page/path/to/file/name
-  * /v/edit/path/to/file/name
-  * /v/pdf/path/to/file/name
-  * /v/category/CatName
+  * /v/page/path/to/file/name [?special = (edit|pdf)]
+  * /v/tag/TagName
   * /v/chain/ChainName/1,2,...
-  * /v/search/?q=blah&t=searchtype
+  * /v/grep/?q=blah&t=searchtype
 * Pinned.
 * Recent.
   * /v/recent - list of five.
+* Task list.
 * Users and change management.
   * /v/page/path/to/filename?r=revno
   * /v/history/path/to/filename

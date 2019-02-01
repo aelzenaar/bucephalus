@@ -1,25 +1,39 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta name=viewport content="width=device-width,initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+{%extends "base.html" %}
+{% set page_title = "Editing article " ~ article_name %}
+{% set nologo = 1 %}
 
+{% block head %}
+{{super()}}
     <script src="https://cdn.geogebra.org/apps/deployggb.js"></script>
+{% endblock %}
 
-    <title>{% if page_title is defined%}{{page_title}} | {%endif%}Bucephalus</title>
-    <meta name="description" content="Bucephalus is a document repository.">
-    <link rel="icon" type="image/ico" href="/static/favicon.ico">
-    {% endblock %}
-  </head>
-  <body>
-    <div id="ggb-element"></div>
+{% block content %}
+
+<h2>File viewer</h2>
+<table id="fileInfo">
+  <colgroup>
+    <col span="1" style="width:12%;">
+    <col span="1" >
+    <col span="1" style="width:12%;">
+    <col span="1" style="width:25%">
+  </colgroup>
+  <tbody>
+    <tr><th>Filename:</th><td>{{article_name}}</td>
+        <th>Author:</th><td>{{article_author}}</td></tr>
+    <tr><th>Tags:</th><td colspan="3">{% for tag in tags -%}<a href="{{tag.loc}}">{{tag.name|safe}}</a>&nbsp; {%- endfor %}</td></tr>
+    <tr><th>Created:</th><td>{{article_timestamp}}</td>
+    {%if article_modded is not none %}<th style='text-align:right;'>Modified:</th><td>{{article_modded}}</td>{% endif %}</tr>
+    <tr><th>Edit file:</th><td><a href="{{article_edit}}">Edit</a></td>
+        <th>As PDF:</th><td><a href="{{article_pdf}}">PDF</a></td></tr>
+  </tbody>
+</table>
+
+    <div id="ggb-element" width="100%"></div>
     <script>
       var ggbApp = new GGBApplet({"appName": "graphing", "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true, "filename": "{{ggbfilename}}" }, true);
       window.addEventListener("load", function() {
         ggbApp.inject('ggb-element');
       });
     </script>
-  </body>
-</html>
+
+{% endblock %}
