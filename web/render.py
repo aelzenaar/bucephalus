@@ -1,10 +1,13 @@
 """ This module contains the web rendering functions for bucephawiki. """
 
 # Standard library
+from pathlib import PurePosixPath
 
 # Libraries
 import markdown2
 import pypandoc
+from flask import Flask, redirect, url_for, abort, render_template, make_response
+import frontmatter
 
 # Bucephalus impots
 import dbops
@@ -16,7 +19,7 @@ def human_readable_tags(tags):
   nice_tag_list = ""
   if len(tags) == 1:
     nice_tag_list = tags[0]
-  else:
+  elif len(tags) > 1:
     for tag in tags[:-1]:
       nice_tag_list = nice_tag_list + tag + ", "
     nice_tag_list = nice_tag_list + " and " + tags[-1]
@@ -33,7 +36,7 @@ def render_directory(path):
 
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts():
+  for part in nice_path.parts:
     last = breadcrumbs[-1]
     breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
@@ -52,7 +55,7 @@ def render_wiki(path):
 
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts():
+  for part in nice_path.parts:
     last = breadcrumbs[-1]
     breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
@@ -71,22 +74,28 @@ def render_wiki(path):
                          viewernotes=fortunes.short_fortune(),
                          html_text=text)
 
-def render_edit(path):
-  if dbops.path_type(path) != dbops.PathType.TEXT:
+def render_edit(path, isnew):
+  if not isnew and dbops.path_type(path) != dbops.PathType.TEXT:
     raise WrongPathTypeError(path)
 
-  text = dbops.read_path_content(path)
+  if isnew:
+    text = "(New document)"
+  else:
+    text = dbops.read_path_content(path)
 
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts():
+  for part in nice_path.parts:
     last = breadcrumbs[-1]
     breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name': '(edit)', 'current': 1})
 
-  metadata = dbops.read_path_metadata(path)
+  if isnew:
+    metadata = {'timestamp_create': "to be set upon commit", 'author':'', 'tags': []}
+  else:
+    metadata = dbops.read_path_metadata(path)
 
-  mdtext = frontmatter.dumps(frontmatter.Post(text,None,metadata))
+  mdtext = frontmatter.dumps(frontmatter.Post(text,**metadata))
 
   return render_template('editor.html',
                          article_name=nice_path.name,
@@ -153,7 +162,7 @@ def render_geogebra(path):
 
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
-  for part in nice_path.parts():
+  for part in nice_path.parts:
     last = breadcrumbs[-1]
     breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1

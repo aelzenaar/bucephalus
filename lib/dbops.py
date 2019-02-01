@@ -46,18 +46,18 @@ def read_path_metadata(path, db=None):
 #
 
 # Compile our regular expression first, so we don't do it every time we need it.
-valid_path_re = re.compile(r"(\b(/\w)+\b)")
+valid_path_re = re.compile(r"((?:\/\w+)+\b)")
 
 
 def valid_path(path):
     """ Decide whether path is a valid path for a page that might or might not exist. """
-    return False if valid_page_path_re.fullmatch(path) is None else True
+    return False if valid_path_re.fullmatch(path) is None else True
 
 
 def path_exists(path):
     """ Actually check whether the given path exists in the database. """
 
-    if not valid_page_path(path):
+    if not valid_path(path):
         raise InvalidPathError(path)
 
     return path_internal(path).exists()

@@ -12,11 +12,13 @@
 
 <a href="{{abort_url}}">Abort Edit: Back to {{article_name}}</a>
 <form method="post" action="{{post_url}}">
-  <textarea id="newtext" name="newtext" cols="80" rows="24" wrap="virtual">{html_text}</textarea><br>
+  <textarea id="newtext" name="newtext" cols="80" rows="24" wrap="virtual">{{html_text}}</textarea><br>
   <input type="submit" value="Save Changes">
 </form>
 <script>
-  var simplemde = new SimpleMDE({{ element: document.getElementById("newtext") }});
+  {% raw %}
+  var simplemde = new SimpleMDE({element: document.getElementById("newtext")});
+  {% endraw %}
 </script>
 
 {% endblock %}

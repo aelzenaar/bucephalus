@@ -35,8 +35,9 @@ def noview():
 
 
 # Normal pages
+@app.route('/v/page/')
 @app.route('/v/page/<path:path>', methods=['POST', 'GET'])
-def v_page(path):
+def v_page(path=''):
   if(path == ''):
     path = 'MainPage'
 
@@ -50,8 +51,8 @@ def v_page(path):
 
     render.write_wiki(path, request.form['newtext'])
 
-  if not dbops.path_exists(path):
-    return redirect(url_for('v_page', edit=1, new=1))
+  if not dbops.path_exists(path) and request.args.get('new', 0, type=int) == 0:
+    return redirect(url_for('v_page', path=path[1:], edit=1, new=1))
 
   if dbops.path_type(path) == dbops.PathType.DIRECTORY:
     return render_directory(path)
@@ -60,16 +61,16 @@ def v_page(path):
     return render_raw(path)
 
 
-  if dbops.path_type(path) == dbops.PathType.TEXT:
-    if request.args.get('pdf', 0, type=int) != 0:
-      return render_pdf(path)
-    elif request.args.get('edit', 0, type=int) != 0:
-      return render_edit(path, True if (request.args.get('new', 0, type=int) != 0) else False)
-    else:
-      return render_wiki(path)
+  if request.args.get('pdf', 0, type=int) != 0:
+    return render_pdf(path)
+  elif request.args.get('edit', 0, type=int) != 0:
+    return render_edit(path, True if (request.args.get('new', 0, type=int) != 0) else False)
 
   if config.enable_ggb_integration() and path[-4:] == '.gbb':
     return render_geogebra(path)
+
+  if dbops.path_type(path) == dbops.PathType.TEXT:
+    return render_wiki(path)
 
   return render_raw(path)
 

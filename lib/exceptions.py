@@ -69,7 +69,7 @@ class WrongPathTypeError(BucephalusException):
         if msg is None:
             # Set some default useful error message
             msg = "Not correct path type: " + str(path)
-        super(FileNotDirectoryError, self).__init__(msg)
+        super(WrongPathTypeError, self).__init__(msg)
         self.path = path
 
 class FileIsDirectoryError(WrongPathTypeError):
