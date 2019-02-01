@@ -1,7 +1,11 @@
+from werkzeug import unescape
+
 import random
 from datetime import datetime
 import requests
+import sys
 
+import config
 
 def short_fortune():
   now = datetime.now()

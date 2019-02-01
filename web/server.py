@@ -7,6 +7,7 @@ from werkzeug import unescape
 app = Flask(__name__)
 
 import traceback
+from datetime import datetime
 
 import requests
 from http import HTTPStatus
@@ -71,6 +72,13 @@ def v_page(path):
     return render_geogebra(path)
 
   return render_raw(path)
+
+#
+# Pinned
+#
+
+def get_pinned():
+  return None
 
 #
 # Tasklist

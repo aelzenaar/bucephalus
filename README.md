@@ -6,6 +6,11 @@ In this repo, I will apply [what I learned from writing Bucephalus](lessons.md).
 
 The bucephalus readme is hidden below, but there is [still nothing to see there](https://www.youtube.com/watch?v=Rz3LTvpGKPY).
 
+## Important notes
+**`./install.sh` does not work.** Run the following command from the root of the project to try to coerce the server into running:
+
+    FLASK_APP="web/server.py" PYTHONPATH="$PYTHONPATH:lib" flask run
+
 
 ## What needs to be done
 

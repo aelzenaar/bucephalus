@@ -6,7 +6,7 @@ class BucephalusException(Exception):
 class UnimplementedError(BucephalusException):
     """ The functionality is unimplemented. """
 
-    def __init__(self, wat, msg=msg):
+    def __init__(self, wat, msg=None):
         if msg is None:
             # Set some default useful error message
             msg = "Unimplemented: " + str(wat)
@@ -63,7 +63,7 @@ class NonexistentPathError(BucephalusException):
         super(NonexistentPathError, self).__init__(msg)
         self.path = path
 
-class WrongPathTypeError(BucephalusException)
+class WrongPathTypeError(BucephalusException):
     """ Different file type to expected. """
     def __init__(self, path, msg=None):
         if msg is None:

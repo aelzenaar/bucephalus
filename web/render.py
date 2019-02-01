@@ -20,7 +20,7 @@ def human_readable_tags(tags):
     for tag in tags[:-1]:
       nice_tag_list = nice_tag_list + tag + ", "
     nice_tag_list = nice_tag_list + " and " + tags[-1]
-return nice_tag_list
+  return nice_tag_list
 
 def render_directory(path):
   if dbops.path_type(path) != dbops.PathType.DIRECTORY:
@@ -35,10 +35,10 @@ def render_directory(path):
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
   for part in nice_path.parts():
     last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name' = part})
+    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
 
-  return render_template('viewer.html',items=items,view_name='directory', breadcrumbs=breadcrumbs], viewernotes=fortunes.short_fortune())
+  return render_template('viewer.html',items=items,view_name='directory', breadcrumbs=breadcrumbs, viewernotes=fortunes.short_fortune())
 
 
 def render_wiki(path):
@@ -54,7 +54,7 @@ def render_wiki(path):
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
   for part in nice_path.parts():
     last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name' = part})
+    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
 
   metadata = dbops.read_path_metadata(path)
@@ -81,8 +81,8 @@ def render_edit(path):
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
   for part in nice_path.parts():
     last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name' = part})
-  breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name' = '(edit)', 'current' = 1})
+    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
+  breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name': '(edit)', 'current': 1})
 
   metadata = dbops.read_path_metadata(path)
 
@@ -155,7 +155,7 @@ def render_geogebra(path):
   nice_path = PurePosixPath(path) # Make it so we can do pathy things.
   for part in nice_path.parts():
     last = breadcrumbs[-1]
-    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name' = part})
+    breadcrumbs.append({'loc': last['loc'] + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
 
   metadata = dbops.read_path_metadata(path)
