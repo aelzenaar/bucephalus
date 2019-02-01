@@ -99,7 +99,7 @@ def v_tasks():
       tasklist.rm(request.form.getlist('delete'))
 
   return render_template('tasklist.html', tasks=tasklist.tasks(), breadcrumbs = [{'loc': url_for('v_tasks'),'name':'Task list','current':1}],
-                         viewernotes=get_fortune(), writeable=config.enable_tasklist_web_write())
+                         viewernotes=fortunes.short_fortune(), writeable=config.enable_tasklist_web_write())
 
 
 #

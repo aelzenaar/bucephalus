@@ -13,6 +13,7 @@ import frontmatter
 import dbops
 from exceptions import *
 import fortunes
+import tasklist
 
 def human_readable_tags(tags):
   tags = ['\"{0}\"'.format(tag) for tag in tags]
