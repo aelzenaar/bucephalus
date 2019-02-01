@@ -48,7 +48,7 @@ def read_path_metadata(path, db=None):
 #
 
 # Compile our regular expression first, so we don't do it every time we need it.
-valid_path_re = re.compile(r"((\/\w+)+\b)")
+valid_path_re = re.compile(r"(\b[A-Z][a-z]+[A-Z]\w+(?:\/[A-Z][a-z]+[A-Z]\w+)*\b)")
 
 
 def valid_path(path):
@@ -68,7 +68,7 @@ def path_exists(path):
 def path_internal(path):
     """ Take a path and give us where it is, physically. """
 
-    return config.get_wiki_dir() / path[1:]
+    return config.get_wiki_dir() / path
 
 
 class PathType(Enum):

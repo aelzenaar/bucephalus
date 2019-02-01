@@ -4,6 +4,7 @@
 from datetime import datetime, timezone
 from pathlib import PurePosixPath, Path
 import tempfile
+from urllib.parse import unquote
 
 # Libraries
 import markdown2
@@ -19,11 +20,9 @@ import tasklist
 
 def breadcrumbs_from_path(path):
   breadcrumbs = [{'loc':url_for('v_page'),'name':'By directory'}]
-  nice_path = PurePosixPath(path[1:]) # Make it so we can do pathy things.
+  nice_path = PurePosixPath(path) # Make it so we can do pathy things.
   for part in nice_path.parts:
     last = breadcrumbs[-1]['loc']
-    if last.endswith('/'):
-      last = last[:-1]
     breadcrumbs.append({'loc': last + '/' + part, 'name': part})
   breadcrumbs[-1]['current'] = 1
 
@@ -47,7 +46,7 @@ def render_directory(path):
   items = []
   pages = dbops.directory_contents(path)
   for page in pages:
-    items.append({'loc': url_for('v_page', path = path[1:] + "/"+str(page)), 'name': str(page)})
+    items.append({'loc': url_for('v_page', path = path + "/"+str(page)), 'name': str(page)})
 
   breadcrumbs=breadcrumbs_from_path(path)
 
@@ -58,9 +57,10 @@ def render_wiki(path):
   if dbops.path_type(path) != dbops.PathType.TEXT:
     raise WrongPathTypeError(path)
 
+  print(unquote(url_for('v_page',path=r'\1')))
   text = markdown2.markdown(dbops.read_path_content(path),
                             extras=["link-patterns", "fenced-code-blocks"],
-                            link_patterns=[(dbops.valid_path_re, url_for('v_page',path='\\1'))])
+                            link_patterns=[(dbops.valid_path_re, unquote(url_for('v_page',path=r'\1')))])
 
 
   breadcrumbs = breadcrumbs_from_path(path)
@@ -74,8 +74,8 @@ def render_wiki(path):
                          tags=human_readable_tags(metadata['tags']),
                          breadcrumbs=breadcrumbs,
                          article_modded=metadata['timestamp_modify'],
-                         article_edit=url_for('v_page',path=path[1:],edit=1),
-                         article_pdf=url_for('v_page',path=path[1:],pdf=1),
+                         article_edit=url_for('v_page',path=path,edit=1),
+                         article_pdf=url_for('v_page',path=path,pdf=1),
                          viewernotes=fortunes.short_fortune(),
                          html_text=text)
 
@@ -84,14 +84,15 @@ def render_edit(path, isnew):
     raise WrongPathTypeError(path)
 
   if isnew:
-    text = "(New document)"
+    text = "# " + path
   else:
     text = dbops.read_path_content(path)
 
   breadcrumbs = breadcrumbs_from_path(path)
   breadcrumbs[-1].pop('current',None)
-  breadcrumbs.append({'loc': url_for('v_page', path=path[1:], edit=1), 'name': '(edit)', 'current': 1})
+  breadcrumbs.append({'loc': url_for('v_page', path=path, edit=1), 'name': '(edit)', 'current': 1})
 
+  # TODO: load from defaults.json like we used to.
   if isnew:
     metadata = {'path': path, 'timestamp_create': '"to be set upon commit"', 'author':'', 'tags': []}
   else:
@@ -105,8 +106,8 @@ def render_edit(path, isnew):
                          article_author=metadata['author'],
                          tags=human_readable_tags(metadata['tags']),
                          breadcrumbs=breadcrumbs,
-                         abort_url=url_for('v_page',path=path[1:]),
-                         post_url=url_for('v_page',path=path[1:]),
+                         abort_url=url_for('v_page',path=path),
+                         post_url=url_for('v_page',path=path),
                          viewernotes=fortunes.short_fortune(),
                          html_text=mdtext)
 

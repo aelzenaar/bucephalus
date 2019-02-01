@@ -41,7 +41,6 @@ def v_page(path=''):
   if(path == ''):
     path = 'MainPage'
 
-  path = '/' + path
   if not dbops.valid_path(path):
     abort(400)
 
@@ -52,7 +51,7 @@ def v_page(path=''):
     write_wiki(path, request.form['newtext'])
 
   if not dbops.path_exists(path) and request.args.get('new', 0, type=int) == 0:
-    return redirect(url_for('v_page', path=path[1:], edit=1, new=1))
+    return redirect(url_for('v_page', path=path, edit=1, new=1))
 
   if dbops.path_type(path) == dbops.PathType.DIRECTORY:
     return render_directory(path)
