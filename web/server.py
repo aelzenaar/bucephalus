@@ -51,7 +51,8 @@ def get_fortune():
                   "the pigeonhole principle will probably solve your problem.",
                   "$3987^{12} + 4365^{12} = 4472^{12}$",
                   "oops.",
-                  "in science one tries to tell people, in such a way as to be understood by everyone, something that no one ever knew before. But in poetry, it's the exact opposite. (PAM Dirac)"
+                  "in science one tries to tell people, in such a way as to be understood by everyone, something that no one ever knew before. But in poetry, it's the exact opposite. (PAM Dirac)",
+                  "always preheat the microwave to 'on'."
                   ]
 
   return "Did you know: " + random.choice(did_you_know)
