@@ -5,7 +5,7 @@
 :cry: :disappointed: :sob: Bucephalus was always an experiment, and it has now (for me) outlived its usefulness. As such, it will no longer be *actively*
 updated or maintained. If you're interested, [here's what I learned from writing Bucephalus](lessons.md).
 
-The readme is still available below, and there's no reason updates will cease entirely; who knows, I might be back.
+**New development:** See the `bucephawiki` branch for current development. Currently almost no features are available, and the ones that exist don't work.
 
 ---
 
