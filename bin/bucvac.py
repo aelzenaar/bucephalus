@@ -92,13 +92,21 @@ def vacuum(filename,output=None,update=None,pin=False):
     template = env.get_template(templatename+".tex")
     rendered = template.render(metadata)
 
-    # Compile the rendered file
-    with tempfile.NamedTemporaryFile() as f:
-      f.write(bytes(rendered, encoding="utf-8"))
-      f.flush()
+    # Compile the rendered file. Note: we don't use "with" because we want to keep the file around in case of error.
+    f = tempfile.NamedTemporaryFile()
+    f.write(bytes(rendered, encoding="utf-8"))
+    f.flush()
+
+    try:
       # Run latex twice (not a typo!!!)
-      subprocess.run("xelatex -no-pdf -halt-on-error -output-directory . -jobname " + str(Path(pdfname).with_suffix('')) + " " + f.name, shell=True, check=True)
+      subprocess.run("xelatex -draftmode -no-pdf -halt-on-error -output-directory . -jobname " + str(Path(pdfname).with_suffix('')) + " " + f.name, shell=True, check=True)
       subprocess.run("xelatex -interaction=batchmode -halt-on-error -output-directory . -jobname " + str(Path(pdfname).with_suffix('')) + " " + f.name, shell=True, check=True)
+    except:
+      copyfile(f.name, 'bucvac_' + Path(f.name).name)
+      print("*** Processed TeX file can be found at " + str('bucvac_' + Path(f.name).name))
+      raise
+
+    f.close()
 
     # Actually commit the files to the database.
     metadata.pop('content', None)
