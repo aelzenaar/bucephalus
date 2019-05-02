@@ -19,6 +19,7 @@ import config
 import os
 import sys
 
+HP2_VERSION = 2
 
 defaults=config.get_defaults_file_path()
 
@@ -55,9 +56,9 @@ def vacuum(filename,output=None,update=None,pin=False):
       metadata["template"].update(decoder.decode(userdef))
       metadata["content"] = content
 
-    if ("Hp2_version" not in metadata["template"]) or (metadata["template"]["Hp2_version"] != 2):
-      print("*** Error: your input file seems to be for an earlier version of hp. Try bucvac instead.",file=sys.stderr)
-      abort(2)
+    if ("Hp2_version" not in metadata["template"]) or (metadata["template"]["Hp2_version"] != HP2_VERSION):
+      print("*** Error: your input file seems to be for an earlier version of hp (expected "+str(HP2_VERSION)+").",file=sys.stderr)
+      sys.exit(2)
 
     if output == None:
       pdfname = Path(filename).with_suffix('.pdf')
@@ -132,7 +133,7 @@ def vacuum(filename,output=None,update=None,pin=False):
       print("*** Note: Something failed. Bucephalus printed a warning earlier that might help.")
     raise
 
-parser = argparse.ArgumentParser(description='Bucephalus Vacuum TeX Script (version 2).')
+parser = argparse.ArgumentParser(description='Bucephalus Vacuum TeX Script (version ' + str(HP2_VERSION) + ').')
 parser.add_argument('filename', metavar='FILENAME', type=str,
                    help='filename for processing')
 parser.add_argument('-o', metavar='OUTPUTFILE', type=str,
