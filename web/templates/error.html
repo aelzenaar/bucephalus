@@ -6,6 +6,8 @@
   <p><a href="https://www.youtube.com/watch?v=8VvB_UmmIzk">(Think calm thoughts.)</a></p>
   {% if error.code == 418 %}
   <a href="https://xkcd.com/1743/"><img src="https://imgs.xkcd.com/comics/coffee.png"/></a>
+  {% elif error.code == 451 %}
+  <a href="https://www.questionablecontent.net/view.php?comic=2987"><img src="https://www.questionablecontent.net/comics/2987.png"/></a>
   {% else %}
   <a href="https://xkcd.com/1024/"><img src="https://imgs.xkcd.com/comics/error_code.png"/></a>
   {% endif %}
