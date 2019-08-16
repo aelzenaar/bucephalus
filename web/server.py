@@ -414,10 +414,10 @@ def handle_error(e):
     return e
   if isinstance(e, HTTPException):
     if(e.code == 301):
-      redirect(e.location)
-    if(e.code == 418): # HTTPStatus can't handle HTCPCP errors.
+      return redirect(e.location, code=301)
+    elif(e.code == 418): # HTTPStatus can't handle HTCPCP errors.
       error = {'code': e.code, 'desc': "I'm a teapot", 'long': 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot". The resulting entity body MAY be short and stout.'}
-    if(e.code == 451): # HTTPStatus can't handle this code defined in RFC 7725.
+    elif(e.code == 451): # HTTPStatus can't handle this code defined in RFC 7725.
       error = {'code': e.code, 'desc': "Unavailable for Legal Reasons", 'long': 'A server operator has received a legal demand to deny access to a resource or to a set of resources that includes the requested resource.'}
     else:
       error = {'code': e.code, 'desc': HTTPStatus(e.code).phrase, 'long': HTTPStatus(e.code).description}
