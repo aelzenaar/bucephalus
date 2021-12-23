@@ -1,11 +1,7 @@
 # bucephalus
 
-![Generic sad image](sherlock.jpg "Goodbye for now")
+[Here's what I learned from writing Bucephalus](lessons.md). I am working on [a new project](https://github.com/aelzenaar/xanthus).
 
-:cry: :disappointed: :sob: Bucephalus was always an experiment, and it has now (for me) outlived its usefulness. As such, it will no longer be *actively*
-updated or maintained. If you're interested, [here's what I learned from writing Bucephalus](lessons.md).
-
-**New development:** See the `bucephawiki` branch for current development. Currently almost no features are available, and the ones that exist don't work.
 
 ---
 
